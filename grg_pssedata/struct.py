@@ -43,9 +43,11 @@ def _check_owners(component, component_type, component_id):
 
 
 def unquote_string(s):
+    '''strips single quotes from a PSSE string'''
     return str(s).strip().strip('\'')
 
 def quote_string(s):
+    '''adds PSSE single quotes to a string'''
     return '\'{}\''.format(s)
 
 
@@ -420,6 +422,7 @@ class Bus(object):
 class Load(object):
     def __init__(self, index, i, id, status, area, zone, pl, ql, ip, iq, yp, yq, owner, scale, intrpt=0):
         '''This data structure contains load parameters.
+
         Args:
             index (int): unique load identifier
             i (int): the identifier of the bus that this load is connected to 
@@ -494,6 +497,7 @@ class Load(object):
 class FixedShunt(object):
     def __init__(self, index, i, id, status, gl, bl):
         '''This data structure contains fixed shunt parameters
+
         Args:
             index (int): unique fixed shunt identifier
             i (int): the identifier of the bus that this fixed shunt is connected to 
@@ -543,6 +547,7 @@ class SwitchedShunt(object):
         n2=None, b2=None, n3=None, b3=None, n4=None, b4=None, n5=None, b5=None,
         n6=None, b6=None, n7=None, b7=None, n8=None, b8=None):
         '''This data structure contains switch shunt parameters
+
         Args:
             index (int): unique switched shunt identifier
             i (int): the identifier of the bus that this switched shunt is connected to 
@@ -658,6 +663,7 @@ class Generator(object):
         rt, xt, gtap, stat, rmpct, pt, pb, o1, f1, o2, f2, o3, f3, o4, f4, 
         wmod, wpf):
         '''This data structure contains generator parameters.
+
         Args:
             index (int): unique generator identifier
             i (int): the identifier of the bus that this generator is connected to 
@@ -887,6 +893,7 @@ class Branch(object):
 class TwoWindingTransformer(object):
     def __init__(self, index, p1, p2, w1, w2):
         '''This data structure contains two winding transformer parameters.
+
         Args:
             index (int): unique transformer identifier
             p1 (TransformerParametersFirstLine): first line of parameters
@@ -937,6 +944,7 @@ class TwoWindingTransformer(object):
 class ThreeWindingTransformer(object):
     def __init__(self, index, p1, p2, w1, w2, w3):
         '''This data structure contains three winding transformer parameters.
+
         Args:
             index (int): unique transformer identifier
             p1 (TransformerParametersFirstLine): first line of parameters
@@ -990,6 +998,7 @@ class ThreeWindingTransformer(object):
 class TransformerParametersFirstLine(object):
     def __init__(self, i, j, k, ckt, cw, cz, cm, mag1, mag2, nmetr, name, stat, o1, f1, o2, f2, o3, f3, o4, f4, vecgrp):
         '''This data structure contains transformer parameters that are common to two and three winding transformers.
+
         Args:
             i (int): the identifier of the primary bus
             j (int): the identifier of the secondary bus
@@ -1085,6 +1094,7 @@ class TransformerParametersFirstLine(object):
 class TransformerParametersSecondLine(object):
     def __init__(self, r12, x12, sbase12, r23, x23, sbase23, r31, x31, sbase31, vmstar, anstar):
         '''This data structure contains transformer parameters for the second line of three winding transformers.
+
         Args:
             r12 (float): resistance between terminal i and j (default 0.0)
             x12 (float): reactance between terminal i and j
@@ -1146,6 +1156,7 @@ class TransformerParametersSecondLine(object):
 class TransformerParametersSecondLineShort(object):
     def __init__(self, r12, x12, sbase12):
         '''This data structure contains transformer parameters for the second line of two winding transformers.
+
         Args:
             r12 (float): resistance between terminal i and j (default 0.0)
             x12 (float): reactance between terminal i and j
@@ -1187,6 +1198,7 @@ class TransformerParametersSecondLineShort(object):
 class TransformerWinding(object):
     def __init__(self, index, windv, nomv, ang, rata, ratb, ratc, cod, cont, rma, rmi, vma, vmi, ntp, tab, cr, cx, cnxa):
         '''This data structure contains transformer winding parameters.
+
         Args:
             index (int): transformer winding identifier (1,2,3)
             windv (float): off-nominal turn ratio (p.u.) (default = 1.0)
@@ -1269,6 +1281,7 @@ class TransformerWindingShort(object):
     def __init__(self, index, windv, nomv):
         '''This data structure contains the shortend transformer winding 
         parameters for the secondary side of a two winding transformer
+
         Args:
             index (int): transformer winding identifier (1,2,3)
             windv (float): off-nominal turn ratio (p.u.) (default = 1.0)
