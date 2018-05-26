@@ -1,3 +1,9 @@
+'''functions for analyzing and transforming psse data files'''
+
+import argparse
+
+from grg_pssedata.io import parse_psse_case_file
+
 def compare_component_lists(list_1, list_2, comp_name, index_name = 'index'):
     '''compares two lists and prints the differences to stdout.  Objects in the
     lists are assumed to have an identification attribute.
@@ -152,8 +158,8 @@ def diff(case_1, case_2):
 def eq(case_1, case_2):
     if case_1 == case_2:
         print('the case file data structures are identical')
-        case_1_str = case_1.to_matpower()
-        case_2_str = case_2.to_matpower()
+        case_1_str = case_1.to_psse()
+        case_2_str = case_2.to_psse()
         if case_1_str == case_2_str:
             print('the psse strings are identical')
             return True
@@ -202,14 +208,14 @@ def main(args):
     '''
 
     if args.cmd == 'eq':
-        case_1 = parse_mp_case_file(args.file_1)
-        case_2 = parse_mp_case_file(args.file_2)
+        case_1 = parse_psse_case_file(args.file_1)
+        case_2 = parse_psse_case_file(args.file_2)
 
         return eq(case_1, case_2)
 
     if args.cmd == 'diff':
-         case_1 = parse_mp_case_file(args.file_1)
-         case_2 = parse_mp_case_file(args.file_2)
+         case_1 = parse_psse_case_file(args.file_1)
+         case_2 = parse_psse_case_file(args.file_2)
 
          return diff(case_1, case_2)
 
