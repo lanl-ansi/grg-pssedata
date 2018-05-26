@@ -1,0 +1,25 @@
+language: python
+os:
+  - linux
+python:
+  - "2.7"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+install:
+  - pip install tox-travis
+  - pip install codecov
+script:
+  - tox
+  - ./check_version.py
+after_success:
+  - codecov
+deploy:
+  - provider: pypi
+    user: ccoffrin
+    password:
+      secure: Tw1KAOAmHopo6rdsFBfK50ynbXGvLB5PCOU7wt0VYGeI8RSssFu580+mFpBaWt0j/Q9Eo+FbZSKLEyeRriO8iFzjHwSW55lsuC3ghlTIpf33aT5Vd2uUwANBZIcwY58l30cT55lWS3S0DEShaIH8xbpAFJWwmr4D8cepCxHOdPq3q1y6tjAUz8JHUtNZIwJUtNGke9IatHm706UCZG3W5N6MmV690SBW+l4U7t3Dtcv5vNkr5zJ3+/56nE9dENDvE5OqGXUvQwpKYVt21V+C62ZaMXFiGI/qoVzUlgoDZNSkU4O0ETIHOarmI51hC+aWxWbn2yFLkb4L6mTryNEH3rFa75WHj16rX4aK0mifnW0fKDfkkozdLTI/umxf6klsDZFQgvbwiMyxUKGMfPpyodGK05Z4UoZgtNSTLmybuCKR9UXbBXCXAqa4dsizHhWKFpnew1BgdQu6OIi6NQj2In0rFoivoYNe39XQTG0EICIYwQ/TneOe305gqx3WyNMQPIN+C9IKrC9tAacQStDpxhUBBMuc1G982Tzuu3vt/f1nPaH9u6SzNePyDiN0qpr2ui6W7rvg50Ivm7ODFxAPrklMwAA4KrZEcqPoB0YYW1YcnAu4pJLTOBmb4629ZNic0PjcxGFFQgCOrP0XeBtw2SIeu08JuMXXc7Y8c8IC904=
+    on:
+      tags: true
+      branch: master
+      condition: $TRAVIS_PYTHON_VERSION = '3.6'
