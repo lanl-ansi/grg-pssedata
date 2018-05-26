@@ -39,6 +39,12 @@ This package is developed at Los Alamos National Laboratory and is provided unde
 Changelog
 ------------
 
+
+**v0.0.2**
+
+- PyPI test release
+
+
 **v0.0.1**
 
 - initial test tag
