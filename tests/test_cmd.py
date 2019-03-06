@@ -80,3 +80,12 @@ class TestCLI:
         equiv = grg_pssedata.cmd.main(args)
         assert(not equiv)
 
+
+class TestParsing:
+    def setup_method(self, _):
+        """Parse a network file"""
+        test_path = os.path.dirname(os.path.realpath(__file__))
+        self.case_1 = grg_pssedata.io.parse_psse_case_file(test_path+'/data/correct/powermodels/parser_test_a.raw')
+
+    def test_001(self):
+        assert(len(self.case_1.buses) == 2)

@@ -39,6 +39,11 @@ This package is developed at Los Alamos National Laboratory and is provided unde
 Changelog
 ------------
 
+**staged**
+
+- Fixed bug where parsing lines with commas or comment characters inside single quotes would fail
+
+
 **v0.1.0**
 
 - Initial release

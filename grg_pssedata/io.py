@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import argparse
 import functools
+import re
 import warnings
 import sys
 
@@ -84,18 +85,16 @@ def parse_psse_case_str(psse_string):
 
 
 def parse_line(line):
-    slash_count = line.count('/')
-    if slash_count > 1:
-        raise PSSEDataParsingError('line has {} occurences of "/" and the parser only supports at most 1'.format(slash_count))
-
     line = line.strip()
     comment = None
 
-    if slash_count > 0:
-        line, comment = line.strip().split('/')
+    l = re.split(r"(?!\B[\"\'][^\"\']*)[\/](?![^\"\']*[\"\']\B)", line, maxsplit=1)
+    if len(l) > 1:
+        line, comment = l
+    else:
+        line = l[0]
 
-    #TODO this should be robust to strings
-    line_parts = line.strip().split(',')
+    line_parts = re.split(r",(?=(?:[^']*'[^']*')*[^']*$)", line)
 
     return line_parts, comment
 
@@ -290,7 +289,7 @@ def parse_psse_case_lines(lines):
         line_index += 1
 
     #multi-section line grouping data
-    msline_count = 0 
+    msline_count = 0
     while parse_line(lines[line_index])[0][0].strip() not in psse_terminuses:
         msline_count += 1
         line_index += 1
@@ -343,7 +342,7 @@ def parse_psse_case_lines(lines):
     if parse_line(lines[line_index])[0][0].strip() != psse_record_terminus:
         line_index += 1
 
-    # switched shunt data block 
+    # switched shunt data block
     swithced_shunt_index_offset = line_index
     while parse_line(lines[line_index])[0][0].strip() not in psse_terminuses:
         line_parts, comment = parse_line(lines[line_index])
@@ -385,9 +384,9 @@ def parse_psse_case_lines(lines):
         line_index += 1
 
     case = Case(ic, sbase, rev, xfrrat, nxfrat, basefrq, record1, record2,
-        buses, loads, fixed_shunts, generators, branches, transformers, areas, 
-        tt_dc_lines, vsc_dc_lines, transformer_corrections, mt_dc_lines, 
-        line_groupings, zones, transfers, owners, facts, switched_shunts, 
+        buses, loads, fixed_shunts, generators, branches, transformers, areas,
+        tt_dc_lines, vsc_dc_lines, transformer_corrections, mt_dc_lines,
+        line_groupings, zones, transfers, owners, facts, switched_shunts,
         gnes, induction_machines)
 
     #print(case)
