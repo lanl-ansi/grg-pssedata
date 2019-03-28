@@ -2034,13 +2034,13 @@ class MultiSectionLineGrouping(object):
         self.id = unquote_string(id)
         self.met = int(met)
         for n, dum in enumerate(dumi):
-            setattr(self, f"dum{n+1}", int(dum))
+            setattr(self, "dum{0}".format(n+1), int(dum))
 
     def __str__(self):
         data = [self.i, self.j, self.id, self.met]
         for i in range(1, 10):
-            if hasattr(self, f"dum{i}"):
-                data.append(getattr(self, f"dum{i}"))
+            if hasattr(self, "dum{0}".format(i)):
+                data.append(getattr(self, "dum{0}".format(i)))
             else:
                 break
         return ' '.join([str(x) for x in data])
@@ -2067,8 +2067,8 @@ class MultiSectionLineGrouping(object):
         data = [self.i, self.j, self.id, self.met]
         dumi = []
         for i in range(1, 10):
-            if hasattr(self, f"dum{i}"):
-                data.append(getattr(self, f"dum{i}"))
+            if hasattr(self, "dum{0}".format(i)):
+                data.append(getattr(self, "dum{0}".format(i)))
             else:
                 break
 
