@@ -22,7 +22,7 @@ def _guard_none(fun, val):
 def _check_range(value, name, component_type, component_id, lb, ub):
     if not (value >= lb and value <= ub):
         warnings.warn('the {} value {} on {} {} is not in the valid range {} to {}'
-            .format(name, value, component_type, component_id, lb, ub), 
+            .format(name, value, component_type, component_id, lb, ub),
             PSSEDataWarning)
 
 
@@ -52,10 +52,10 @@ def quote_string(s):
 
 
 class Case(object):
-    def __init__(self, ic, sbase, rev, xfrrat, nxfrat, basfrq, record1, record2, 
-        buses, loads, fixed_shunts, generators, branches, transformers, areas, 
-        tt_dc_lines, vsc_dc_lines, transformer_corrections, mt_dc_lines, 
-        line_groupings, zones, transfers, owners, facts, switched_shunts, 
+    def __init__(self, ic, sbase, rev, xfrrat, nxfrat, basfrq, record1, record2,
+        buses, loads, fixed_shunts, generators, branches, transformers, areas,
+        tt_dc_lines, vsc_dc_lines, transformer_corrections, mt_dc_lines,
+        line_groupings, zones, transfers, owners, facts, switched_shunts,
         gnes, induction_machines):
         '''This data structure contains lists of all the key components in a
         pss/e power network.  At this time, only pss/e case version 33 is supported.
@@ -81,7 +81,7 @@ class Case(object):
             transformer_corrections (list of TBD): transformer correction tables
             mt_dc_lines (list of TBD): multi-terminal dc lines
             line_groupings (list of TBD): line groupings
-            zones (list of Zone): zones 
+            zones (list of Zone): zones
             transfers (list of TBD): inter-area transfers
             owners (list of Owner): owners
             facts (list of TBD): FACTS devices
@@ -119,10 +119,10 @@ class Case(object):
         self.induction_machines = induction_machines
 
         self.component_lists = [self.buses, self.loads, self.fixed_shunts,
-            self.generators, self.branches, self.transformers, self.areas, 
+            self.generators, self.branches, self.transformers, self.areas,
             self.tt_dc_lines, self.vsc_dc_lines, self.transformer_corrections,
             self.mt_dc_lines, self.line_groupings, self.zones, self.transfers,
-            self.owners, self.facts, self.switched_shunts, self.gnes, 
+            self.owners, self.facts, self.switched_shunts, self.gnes,
             self.induction_machines]
 
 
@@ -224,15 +224,15 @@ class Case(object):
         '''
 
         if self.rev != 33:
-            warnings.warn('only version 33 is supported, given version {}'.format(self.rev), 
+            warnings.warn('only version 33 is supported, given version {}'.format(self.rev),
             PSSEDataWarning)
 
         if len(self.record1) > 60:
-            warnings.warn('the first record has {} characters, only 60 are supported'.format(len(self.record1)), 
+            warnings.warn('the first record has {} characters, only 60 are supported'.format(len(self.record1)),
             PSSEDataWarning)
 
         if len(self.record2) > 60:
-            warnings.warn('the first record has {} characters, only 60 are supported'.format(len(self.record2)), 
+            warnings.warn('the first record has {} characters, only 60 are supported'.format(len(self.record2)),
             PSSEDataWarning)
 
         _check_boolean(self.ic, 'case type flag', 'case', '-')
@@ -368,8 +368,8 @@ class Bus(object):
 
     def __str__(self):
         data = [self.i, self.name, self.basekv, self.ide, self.area, self.zone,
-            self.owner, self.vm, self.va, self.nvhi, self.nvlo, self.evhi, 
-            self.evlo]
+                self.owner, self.vm, self.va, self.nvhi, self.nvlo, self.evhi,
+                self.evlo]
         return ' '.join([str(x) for x in data])
 
     def __eq__(self, other):
@@ -388,8 +388,7 @@ class Bus(object):
         '''
 
         if not (self.i >= 1 and self.i <= 999997):
-            warnings.warn('bus {} is not in the valid range 1 to 999997'
-                .format(self.i), PSSEDataWarning)
+            warnings.warn('bus {} is not in the valid range 1 to 999997'.format(self.i), PSSEDataWarning)
 
         #_check_range(self.i, 'id', 'bus', self.i, 1, 999997)
         _check_range(self.area, 'area', 'bus', self.i, 1, 9999)
@@ -412,9 +411,9 @@ class Bus(object):
     def to_psse(self):
         '''Returns: a pss/e encoding of this data structure as a string'''
 
-        data = [self.i, quote_string(self.name), self.basekv, self.ide, 
-            self.area, self.zone, self.owner, self.vm, self.va, 
-            self.nvhi, self.nvlo, self.evhi, self.evlo]
+        data = [self.i, quote_string(self.name), self.basekv, self.ide,
+                self.area, self.zone, self.owner, self.vm, self.va,
+                self.nvhi, self.nvlo, self.evhi, self.evlo]
 
         return ', '.join([str(x) for x in data])
 
@@ -425,7 +424,7 @@ class Load(object):
 
         Args:
             index (int): unique load identifier
-            i (int): the identifier of the bus that this load is connected to 
+            i (int): the identifier of the bus that this load is connected to
             id (string): load identifier (not unique)
             status (int): load status (in service = 1, out of service = 0)
             area (int): area id, 1-9999 (default = the area of the connecting bus)
@@ -459,7 +458,7 @@ class Load(object):
 
     def __str__(self):
         data = [self.index, self.i, self.id, self.status, self.area, self.zone,
-            self.pl, self.ql, self.ip, self.iq, self.yp, self.yq, self.owner, 
+            self.pl, self.ql, self.ip, self.iq, self.yp, self.yq, self.owner,
             self.scale, self.intrpt]
         return ' '.join([str(x) for x in data])
 
@@ -487,8 +486,8 @@ class Load(object):
     def to_psse(self):
         '''Returns: a pss/e encoding of this data structure as a string'''
 
-        data = [self.i, quote_string(self.id), self.status, self.area, 
-            self.zone, self.pl, self.ql, self.ip, self.iq, self.yp, self.yq, 
+        data = [self.i, quote_string(self.id), self.status, self.area,
+            self.zone, self.pl, self.ql, self.ip, self.iq, self.yp, self.yq,
             self.owner, self.scale, self.intrpt]
 
         return ', '.join([str(x) for x in data])
@@ -500,7 +499,7 @@ class FixedShunt(object):
 
         Args:
             index (int): unique fixed shunt identifier
-            i (int): the identifier of the bus that this fixed shunt is connected to 
+            i (int): the identifier of the bus that this fixed shunt is connected to
             id (string): fixed shunt identifier (not unique)
             status (int): fixed shunt status (in service = 1, out of service = 0)
             gl (float): the conductance to ground in MW at one per unit voltage (default = 0.0)
@@ -543,14 +542,14 @@ class FixedShunt(object):
 
 
 class SwitchedShunt(object):
-    def __init__(self, index, i, modsw, adjm, stat, vswhi, vswlo, swrem, rmpct, rmidnt, binit, n1, b1, 
-        n2=None, b2=None, n3=None, b3=None, n4=None, b4=None, n5=None, b5=None,
-        n6=None, b6=None, n7=None, b7=None, n8=None, b8=None):
+    def __init__(self, index, i, modsw, adjm, stat, vswhi, vswlo, swrem, rmpct, rmidnt, binit, n1, b1,
+                    n2=None, b2=None, n3=None, b3=None, n4=None, b4=None, n5=None, b5=None,
+                    n6=None, b6=None, n7=None, b7=None, n8=None, b8=None):
         '''This data structure contains switch shunt parameters
 
         Args:
             index (int): unique switched shunt identifier
-            i (int): the identifier of the bus that this switched shunt is connected to 
+            i (int): the identifier of the bus that this switched shunt is connected to
             modsw (int): control mode (locked = 0, discrete = 1, continuous = 2, ... 6) (default = 1)
             adjm (int): adjustment method (input order = 0, admittance order = 1) (default = 0)
             stat (int): switched shunt status (in service = 1, out of service = 0)
@@ -607,9 +606,9 @@ class SwitchedShunt(object):
 
     def __str__(self):
         data = [self.index, self.i, self.modsw, self.adjm, self.stat, self.vswhi,
-            self.vswlo, self.swrem, self.rmpct, self.rmidnt, self.binit, 
-            self.n1, self.b1, self.n2, self.b2, self.n3, self.b3, self.n4, self.b4,
-            self.n5, self.b5, self.n6, self.b6, self.n7, self.b7, self.n8, self.b8]
+                self.vswlo, self.swrem, self.rmpct, self.rmidnt, self.binit,
+                self.n1, self.b1, self.n2, self.b2, self.n3, self.b3, self.n4, self.b4,
+                self.n5, self.b5, self.n6, self.b6, self.n7, self.b7, self.n8, self.b8]
         return ' '.join([str(x) for x in data])
 
     def __eq__(self, other):
@@ -642,10 +641,10 @@ class SwitchedShunt(object):
         '''Returns: a pss/e encoding of this data structure as a string'''
 
         data = [self.i, self.modsw, self.adjm, self.stat, self.vswhi,
-            self.vswlo, self.swrem, self.rmpct, quote_string(self.rmidnt), self.binit, 
-            self.n1, self.b1]
+                self.vswlo, self.swrem, self.rmpct, quote_string(self.rmidnt), self.binit,
+                self.n1, self.b1]
 
-        ids = [('n2', 'b2'), ('n3', 'b3'), ('n4', 'b4'), ('n5', 'b5'), 
+        ids = [('n2', 'b2'), ('n3', 'b3'), ('n4', 'b4'), ('n5', 'b5'),
             ('n6', 'b6'), ('n7', 'b7'), ('n8', 'b8')]
         for ni, bi in ids:
             ni_value = getattr(self, ni)
@@ -660,13 +659,13 @@ class SwitchedShunt(object):
 
 class Generator(object):
     def __init__(self, index, i, id, pg, qg, qt, qb, vs, ireg, mbase, zr, zx,
-        rt, xt, gtap, stat, rmpct, pt, pb, o1, f1, o2, f2, o3, f3, o4, f4, 
-        wmod, wpf):
+                    rt, xt, gtap, stat, rmpct, pt, pb, o1, f1, o2, f2, o3, f3, o4, f4,
+                    wmod, wpf):
         '''This data structure contains generator parameters.
 
         Args:
             index (int): unique generator identifier
-            i (int): the identifier of the bus that this generator is connected to 
+            i (int): the identifier of the bus that this generator is connected to
             id (string): machine identifier (not unique)
             pg (float): active power output (MW)
             qg (float): reactive power output (MVAr)
@@ -686,9 +685,9 @@ class Generator(object):
             pb (float): active power output lower bound (MW)
             o1 (int): owner one id, 1-9999 (default = the owner of the connecting bus)
             f1 (float): owner one fraction of total ownership (default = 1.0)
-            o2 (int): owner two id, 1-9999 (default = the owner of the connecting bus) 
+            o2 (int): owner two id, 1-9999 (default = the owner of the connecting bus)
             f2 (float): owner two fraction of total ownership (default = 1.0)
-            o3 (int): owner three id, 1-9999 (default = the owner of the connecting bus) 
+            o3 (int): owner three id, 1-9999 (default = the owner of the connecting bus)
             f3 (float): owner three fraction of total ownership (default = 1.0)
             o4 (int): owner four id, 1-9999 (default = the owner of the connecting bus)
             f4 (float): owner four fraction of total ownership (default = 1.0)
@@ -727,10 +726,10 @@ class Generator(object):
 
     def __str__(self):
         data = [self.index, self.i, self.id, self.pg, self.qg, self.qt, self.qb,
-            self.vs, self.ireg, self.mbase, self.zr, self.zx, self.rt, self.xt,
-            self.gtap, self.stat, self.rmpct, self.pt, self.pb, self.o1,
-            self.f1, self.o2, self.f2, self.o3, self.f3, self.o4, self.f4,
-            self.wmod, self.wpf]
+                self.vs, self.ireg, self.mbase, self.zr, self.zx, self.rt, self.xt,
+                self.gtap, self.stat, self.rmpct, self.pt, self.pb, self.o1,
+                self.f1, self.o2, self.f2, self.o3, self.f3, self.o4, self.f4,
+                self.wmod, self.wpf]
         return ' '.join([str(x) for x in data])
 
     def __eq__(self, other):
@@ -769,11 +768,11 @@ class Generator(object):
     def to_psse(self):
         '''Returns: a pss/e encoding of this data structure as a string'''
 
-        data = [self.i, quote_string(self.id), self.pg, self.qg, self.qt, self.qb, 
-            self.vs, self.ireg, self.mbase, self.zr, self.zx, self.rt, self.xt,
-            self.gtap, self.stat, self.rmpct, self.pt, self.pb, self.o1, self.f1, 
-            self.o2, self.f2, self.o3, self.f3, self.o4, self.f4, self.wmod, 
-            self.wpf]
+        data = [self.i, quote_string(self.id), self.pg, self.qg, self.qt, self.qb,
+                self.vs, self.ireg, self.mbase, self.zr, self.zx, self.rt, self.xt,
+                self.gtap, self.stat, self.rmpct, self.pt, self.pb, self.o1, self.f1,
+                self.o2, self.f2, self.o3, self.f3, self.o4, self.f4, self.wmod,
+                self.wpf]
 
         return ', '.join([str(x) for x in data])
 
@@ -803,9 +802,9 @@ class Branch(object):
             len (float): line length (user selected units)
             o1 (int): owner one id, 1-9999 (default = the owner of the connecting bus)
             f1 (float): owner one fraction of total ownership (default = 1.0)
-            o2 (int): owner two id, 1-9999 (default = the owner of the connecting bus) 
+            o2 (int): owner two id, 1-9999 (default = the owner of the connecting bus)
             f2 (float): owner two fraction of total ownership (default = 1.0)
-            o3 (int): owner three id, 1-9999 (default = the owner of the connecting bus) 
+            o3 (int): owner three id, 1-9999 (default = the owner of the connecting bus)
             f3 (float): owner three fraction of total ownership (default = 1.0)
             o4 (int): owner four id, 1-9999 (default = the owner of the connecting bus)
             f4 (float): owner four fraction of total ownership (default = 1.0)
@@ -838,10 +837,10 @@ class Branch(object):
         self.f4 = float(f4)
 
     def __str__(self):
-        data = [self.index, self.i, self.j, self.ckt, self.r, self.x, self.b, 
-            self.ratea, self.rateb, self.ratec, self.gi, self.bi, self.gj, 
-            self.bj, self.st, self.met, self.len, self.o1, self.f1, self.o2, 
-            self.f2, self.o3, self.f3, self.o4, self.f4]
+        data = [self.index, self.i, self.j, self.ckt, self.r, self.x, self.b,
+                self.ratea, self.rateb, self.ratec, self.gi, self.bi, self.gj,
+                self.bj, self.st, self.met, self.len, self.o1, self.f1, self.o2,
+                self.f2, self.o3, self.f3, self.o4, self.f4]
         return ' '.join([str(x) for x in data])
 
     def __eq__(self, other):
@@ -882,9 +881,9 @@ class Branch(object):
         '''Returns: a pss/e encoding of this data structure as a string'''
 
         data = [self.i, self.j, quote_string(self.ckt), self.r, self.x, self.b, self.ratea,
-            self.rateb, self.ratec, self.gi, self.bi, self.gj, self.bj, 
-            self.st, self.met, self.len, self.o1, self.f1, self.o2, self.f2,
-            self.o3, self.f3, self.o4, self.f4]
+                self.rateb, self.ratec, self.gi, self.bi, self.gj, self.bj,
+                self.st, self.met, self.len, self.o1, self.f1, self.o2, self.f2,
+                self.o3, self.f3, self.o4, self.f4]
 
         return ', '.join([str(x) for x in data])
 
@@ -1014,13 +1013,13 @@ class TransformerParametersFirstLine(object):
             stat (int): transformer status (0 = out of service, 1 = in service, 2 = winding 2 out, 3 = winding 3 out, 4 = winding 1 out)
             o1 (int): owner one id, 1-9999 (default = the owner of the connecting bus)
             f1 (float): owner one fraction of total ownership (default = 1.0)
-            o2 (int): owner two id, 1-9999 (default = the owner of the connecting bus) 
+            o2 (int): owner two id, 1-9999 (default = the owner of the connecting bus)
             f2 (float): owner two fraction of total ownership (default = 1.0)
-            o3 (int): owner three id, 1-9999 (default = the owner of the connecting bus) 
+            o3 (int): owner three id, 1-9999 (default = the owner of the connecting bus)
             f3 (float): owner three fraction of total ownership (default = 1.0)
             o4 (int): owner four id, 1-9999 (default = the owner of the connecting bus)
             f4 (float): owner four fraction of total ownership (default = 1.0)
-            vecgrp (string): vector group identifier (default = '            ') 
+            vecgrp (string): vector group identifier (default = '            ')
         '''
 
         self.i = int(i)
@@ -1046,10 +1045,10 @@ class TransformerParametersFirstLine(object):
         self.vecgrp = unquote_string(vecgrp)
 
     def __str__(self):
-        data = [self.i, self.j, self.k, self.ckt, self.cw, self.cz, self.cm, 
-            self.mag1, self.mag2, self.nmetr, self.name, self.stat, self.o1, 
-            self.f1, self.o2, self.f2, self.o3, self.f3, self.o4, self.f4, 
-            self.vecgrp]
+        data = [self.i, self.j, self.k, self.ckt, self.cw, self.cz, self.cm,
+                self.mag1, self.mag2, self.nmetr, self.name, self.stat, self.o1,
+                self.f1, self.o2, self.f2, self.o3, self.f3, self.o4, self.f4,
+                self.vecgrp]
         return ' '.join([str(x) for x in data])
 
     def __eq__(self, other):
@@ -1082,10 +1081,10 @@ class TransformerParametersFirstLine(object):
     def to_psse(self):
         '''Returns: a pss/e encoding of this data structure as a string'''
 
-        data = [self.i, self.j, self.k, quote_string(self.ckt), self.cw, self.cz, self.cm, 
-            self.mag1, self.mag2, self.nmetr, quote_string(self.name), self.stat, self.o1, 
-            self.f1, self.o2, self.f2, self.o3, self.f3, self.o4, self.f4, 
-            quote_string(self.vecgrp)]
+        data = [self.i, self.j, self.k, quote_string(self.ckt), self.cw, self.cz, self.cm,
+                self.mag1, self.mag2, self.nmetr, quote_string(self.name), self.stat, self.o1,
+                self.f1, self.o2, self.f2, self.o3, self.f3, self.o4, self.f4,
+                quote_string(self.vecgrp)]
 
         return ', '.join([str(x) for x in data])
 
@@ -1122,9 +1121,9 @@ class TransformerParametersSecondLine(object):
         self.anstar = float(anstar)
 
     def __str__(self):
-        data = [self.r12, self.x12, self.sbase12, self.r23, self.x23, 
-            self.sbase23, self.r31, self.x31, self.sbase31, self.vmstar, 
-            self.anstar]
+        data = [self.r12, self.x12, self.sbase12, self.r23, self.x23,
+                self.sbase23, self.r31, self.x31, self.sbase31, self.vmstar,
+                self.anstar]
         return ' '.join([str(x) for x in data])
 
     def __eq__(self, other):
@@ -1146,9 +1145,9 @@ class TransformerParametersSecondLine(object):
     def to_psse(self):
         '''Returns: a pss/e encoding of this data structure as a string'''
 
-        data = [self.r12, self.x12, self.sbase12, self.r23, self.x23, 
-            self.sbase23, self.r31, self.x31, self.sbase31, self.vmstar, 
-            self.anstar]
+        data = [self.r12, self.x12, self.sbase12, self.r23, self.x23,
+                self.sbase23, self.r31, self.x31, self.sbase31, self.vmstar,
+                self.anstar]
 
         return ', '.join([str(x) for x in data])
 
@@ -1240,9 +1239,9 @@ class TransformerWinding(object):
         self.cnxa = float(cnxa)
 
     def __str__(self):
-        data = [self.index, self.windv, self.nomv, self.ang, self.rata, self.ratb, 
-            self.ratc, self.cod, self.cont, self.rma, self.rmi, self.vma, 
-            self.vmi, self.ntp, self.tab, self.cr, self.cx, self.cnxa]
+        data = [self.index, self.windv, self.nomv, self.ang, self.rata, self.ratb,
+                self.ratc, self.cod, self.cont, self.rma, self.rmi, self.vma,
+                self.vmi, self.ntp, self.tab, self.cr, self.cx, self.cnxa]
         return ' '.join([str(x) for x in data])
 
     def __eq__(self, other):
@@ -1270,16 +1269,16 @@ class TransformerWinding(object):
     def to_psse(self):
         '''Returns: a pss/e encoding of this data structure as a string'''
 
-        data = [self.windv, self.nomv, self.ang, self.rata, self.ratb, 
-            self.ratc, self.cod, self.cont, self.rma, self.rmi, self.vma, 
-            self.vmi, self.ntp, self.tab, self.cr, self.cx, self.cnxa]
+        data = [self.windv, self.nomv, self.ang, self.rata, self.ratb,
+                self.ratc, self.cod, self.cont, self.rma, self.rmi, self.vma,
+                self.vmi, self.ntp, self.tab, self.cr, self.cx, self.cnxa]
 
         return ', '.join([str(x) for x in data])
 
 
 class TransformerWindingShort(object):
     def __init__(self, index, windv, nomv):
-        '''This data structure contains the shortend transformer winding 
+        '''This data structure contains the shortend transformer winding
         parameters for the secondary side of a two winding transformer
 
         Args:
@@ -1328,7 +1327,7 @@ class Area(object):
         Args:
             i (int): the identifier of the area
             isw (int): the identifier of the interchange slack bus
-            pdes (float): desired net area interchange (MW) 
+            pdes (float): desired net area interchange (MW)
             ptol (float): interchange tolerance (MW += out)
             arnam (string): area name, 8 characters, must be enclosed in single quotes
         '''
@@ -1450,3 +1449,1046 @@ class Owner(object):
 
         return ', '.join([str(x) for x in data])
 
+
+class FACTSDevice(object):
+    def __init__(self, index, name, i, j, mode, pdes, qdes, vset, shmx, trmx, vtmn, vtmx, vsmx, imx, linx, rmpct, owner, set1, set2, vsref, remot=0, mname=''):
+        '''This data structure contains FACTS device parameters.
+
+        Args:
+            index (int) : unique FACTS device identifier
+            name (str) : name of device
+            i (int) : sending end bus number
+            j (int) : terminal end bus number
+            mode (int) : control mode (status)
+            pdes (float) : desired active power flow at j
+            qdes (float) : desired reactive power flow at j
+            vset (float) : voltage setpoint at i
+            shmx (float) : max shunt current at i
+            trmx (float) : max active power transfer
+            vtmn (float) : min voltage at j
+            vtmx (float) : max voltage at j
+            vsmx (float) : max series voltage
+            imx (float) : max series current
+            linx (float) : reactance of dummy series element
+            rmpct (float) : percent of Mvar required to hold voltage at bus controlled by shunt element
+            owner (int) : owner number
+            set1 (float) : resistance of constant impedance, or min of constant series voltage magnitude, or real component of constant series voltage
+            set2 (float) : reactance of constant impedance, or max of constant series voltage magnitude, or imaginary component of constant series voltage
+            vsref (int) : series voltage reference code
+            remot (int) : bus number of bus regulated by shunt element
+            mname (str) : name of the IPFC master FACTS Device
+        '''
+        self.index = index
+        self.name = unquote_string(name)
+        self.i = int(i)
+        self.j = int(j)
+        self.mode = int(mode)
+        self.pdes = float(pdes)
+        self.qdes = float(qdes)
+        self.vset = float(vset)
+        self.shmx = float(shmx)
+        self.trmx = float(trmx)
+        self.vtmn = float(vtmn)
+        self.vtmx = float(vtmx)
+        self.vsmx = float(vsmx)
+        self.imx = float(imx)
+        self.linx = float(linx)
+        self.rmpct = float(rmpct)
+        self.owner = int(owner)
+        self.set1 = float(set1)
+        self.set2 = float(set2)
+        self.vsref = int(vsref)
+        self.remot = int(remot)
+        self.mname = unquote_string(mname)
+
+    def __str__(self):
+        data = [self.name, self.im, self.j, self.mode, self.pdes, self.qdes,
+                self.vset, self.shmx, self.trmx, self.vtmn, self.vtmx, self.vsmx,
+                self.imx, self.linx, self.rmpct, self.owner, self.set1, self.set2,
+                self.vsref, self.remot, self.mname]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        _check_range(self.owner, 'owner', 'bus', self.i, 1, 9999)
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+
+        data = [quote_string(self.name), self.i, self.j, self.mode, self.pdes, self.qdes,
+                self.vset, self.shmx, self.trmx, self.vtmn, self.vtmx, self.vsmx,
+                self.imx, self.linx, self.rmpct, self.owner, self.set1, self.set2,
+                self.vsref, self.remot, quote_string(self.mname)]
+
+        return ', '.join([str(x) for x in data])
+
+
+class VSCDCLine(object):
+    def __init__(self, index, params, c1, c2):
+        '''This data structure contains VSC DC Line parameters.
+
+        Args:
+            index (int) : unique vsc dc line identifier
+            params (VSCDCLineParameters) : first line of VSC DC line data entry
+            c1 (VSCDCLineConverter) : second line of VSC DC Line data entry (converter 1)
+            c2 (VSCDCLineConverter) : third line of VSC DC Line data entry (converter 2)
+        '''
+        self.index = index
+        self.params = params
+        self.c1 = c1
+        self.c2 = c2
+
+    def __str__(self):
+        data = [self.params, self.c1, self.c2]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+        data = [self.params, self.c1, self.c2]
+        return os.linesep.join([x.to_psse() for x in data])
+
+
+class VSCDCLineParameters(object):
+    def __init__(self, name, mdc, rdc, o1=0, f1=1, o2=0, f2=1, o3=0, f3=1, o4=0, f4=1):
+        '''This data structure contains VSC DC line first-line parameters
+
+        Args:
+            name (str) : name of VSC DC Line
+            mdc (int) : control mode (status)
+            rdc (float) : dc line resistance
+            oi (int) : owner number
+            fi (float) : fraction of total ownership assigned to oi
+        '''
+        self.name = unquote_string(name)
+        self.mdc = int(mdc)
+        self.rdc = float(rdc)
+        self.o1 = int(o1)
+        self.f1 = float(f1)
+        self.o2 = int(o2)
+        self.f2 = float(f2)
+        self.o3 = int(o3)
+        self.f3 = float(f3)
+        self.o4 = int(o4)
+        self.f4 = float(f4)
+
+    def __str__(self):
+        data = [self.name, self.mdc, self.rdc, self.o1, self.f1,
+                self.o2, self.f2, self.o3, self.f3, self.o4, self.f4]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        pass
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+        data = [quote_string(self.name), self.mdc, self.rdc, self.o1, self.f1,
+                self.o2, self.f2, self.o3, self.f3, self.o4, self.f4]
+        return ', '.join([str(x) for x in data])
+
+
+class VSCDCLineConverter(object):
+    def __init__(self, ibus, type, mode, dcset, acset, aloss, bloss, minloss, smax, imax, pwf, maxq, minq, remot=0, rmpct=100.0):
+        '''This data structure contains VSC DC Line Converter parameters
+
+        Args:
+            ibus (int) : bus number
+            type (int) : type of converter dc control
+            mode (int) : ac control mode
+            dcset (float) : dc setpoint
+            acset (float) : ac setpoint
+            aloss (float) : coefficient to linear equation for converter losses
+            bloss (float) : coefficient to linear equation for converter losses
+            minloss (float) : minimum losses
+            smax (float) : MVA rating
+            imax (float) : ac current rating
+            pwf (float) : power weighting factor
+            maxq (float) : reactive power upper limit
+            minq (float) : reactive power lower limit
+            remot (int) : bus number of remote regulating bus
+            rmpct (float) : percent of Mvar required to hold bus voltage
+        '''
+        self.ibus = int(ibus)
+        self.type = int(type)
+        self.mode = int(mode)
+        self.dcset = float(dcset)
+        self.acset = float(acset)
+        self.aloss = float(aloss)
+        self.bloss = float(bloss)
+        self.minloss = float(minloss)
+        self.smax = float(smax)
+        self.imax = float(imax)
+        self.pwf = float(pwf)
+        self.maxq = float(maxq)
+        self.minq = float(minq)
+        self.remot = int(remot)
+        self.rmpct = float(rmpct)
+
+    def __str__(self):
+        data = [self.ibus, self.type, self.mode, self.dcset, self.acset, self.aloss,
+                self.bloss, self.minloss, self.smax, self.imax, self.pwf, self.maxq,
+                self.minq, self.remot, self.rmpct]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        pass
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+        data = [self.ibus, self.type, self.mode, self.dcset, self.acset, self.aloss,
+                self.bloss, self.minloss, self.smax, self.imax, self.pwf, self.maxq,
+                self.minq, self.remot, self.rmpct]
+        return ', '.join([str(x) for x in data])
+
+
+class TwoTerminalDCLine(object):
+    def __init__(self, index, params, rectifier, inverter):
+        '''This data structure contains Two-Terminal DC Line parameters.
+
+        Args:
+            index (int) : unique two-terminal dc line identifier
+            params (TwoTerminalDCLineParameters) : first line of two-terminal dc line data entry
+            rectifier (TwoTerminalDCLineRectifier) : second line of two-terminal dc line data entry
+            inverter (TwoTerminalDCLineInverter) : third line of two-terminal dc line data entry
+        '''
+        self.index = index
+        self.params = params
+        self.rectifier = rectifier
+        self.inverter = inverter
+
+    def __str__(self):
+        data = [self.params, self.rectifier, self.inverter]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+        data = [self.params, self.rectifier, self.inverter]
+        return os.linesep.join([x.to_psse() for x in data])
+
+
+class TwoTerminalDCLineParameters(object):
+    def __init__(self, name, mdc, rdc, setvl, vschd, vcmod, rcomp, delti, meter, dcvmin, cccitmx, cccacc):
+        '''This data structure contains Two-Terminal DC Line parameters for the first line of the data entry
+
+        Args:
+            name (str) : name of the dc line
+            mdc (int) : control mode (status)
+            rdc (float) : dc line resistance
+            setvl (float) : current or power demand
+            vschd (float) : scheduled dc voltage
+            vcmod (float) : switch dc voltage
+            rcomp (float) : compounding resistance
+            delti (float) : margin of desired dc power or current
+            meter (str) : metered end code
+            dcvmin (float) : minimum compounded dc voltage
+            cccitmx (int) : iteration limit for solution proceedure
+            cccacc (float) : acceleration factor for solution proceedure
+        '''
+        self.name = unquote_string(name)
+        self.mdc = int(mdc)
+        self.rdc = float(rdc)
+        self.setvl = float(setvl)
+        self.vschd = float(vschd)
+        self.vcmod = float(vcmod)
+        self.rcomp = float(rcomp)
+        self.delti = float(delti)
+        self.meter = unquote_string(meter)
+        self.dcvmin = float(dcvmin)
+        self.cccitmx = int(cccitmx)
+        self.cccacc = float(cccacc)
+
+    def __str__(self):
+        data = [self.name, self.mdc, self.rdc, self.setvl, self.vschd, self.vcmod,
+                self.rcomp, self.delti, self.meter, self.dcvmin, self.cccitmx,
+                self.cccacc]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+
+        data = [quote_string(self.name), self.mdc, self.rdc, self.setvl, self.vschd,
+                self.vcmod, self.rcomp, self.delti, self.meter, self.dcvmin, self.cccitmx,
+                self.cccacc]
+
+        return ', '.join([str(x) for x in data])
+
+class TwoTerminalDCLineRectifier(object):
+    def __init__(self, ipr, nbr, anmxr, anmnr, rcr, xcr, ebasr, trr, tapr, tmxr, tmnr, stpr, icr, ifr, itr, idr, xcapr):
+        '''This data structure contains Two-Terminal DC Line parameters for the Rectifier (second line)
+
+        Args:
+            ipr (int) : bus number
+            nbr (int) : number of bridges
+            anmxr (float) : nominal max firing angle
+            anmnr (float) : minimum steady-state firing angle
+            rcr (float) : transformer resistance per bridge
+            xcr (float) : transformer reactance per bridge
+            ebasr (float) : primary base ac voltage
+            trr (float) : transformer ratio
+            tapr (float) : tap setting
+            tmxr (float) : max tap setting
+            tmnr (float) : min tap setting
+            stpr (float) : tap step
+            icr (int) : firing angle measuring bus number
+            ifr (int) : winding 1 side from bus number
+            itr (int) : winding 2 side to bus number
+            idr (str) : circuit identifier
+            xcapr (float) : capacitor resistance per bridge
+        '''
+        self.ipr = int(ipr)
+        self.nbr = int(nbr)
+        self.anmxr = float(anmxr)
+        self.anmnr = float(anmnr)
+        self.rcr = float(rcr)
+        self.xcr = float(xcr)
+        self.ebasr = float(ebasr)
+        self.trr = float(trr)
+        self.tapr = float(tapr)
+        self.tmxr = float(tmxr)
+        self.tmnr = float(tmnr)
+        self.stpr = float(stpr)
+        self.icr = int(icr)
+        self.ifr = int(ifr)
+        self.itr = int(itr)
+        self.idr = unquote_string(idr)
+        self.xcapr = float(xcapr)
+
+    def __str__(self):
+        data = [self.ipr, self.nbr, self.anmxr, self.anmnr, self.rcr,
+                self.xcr, self.ebasr, self.trr, self.tapr, self.tmxr,
+                self.tmnr, self.stpr, self.icr, self.ifr, self.itr,
+                self.idr, self.xcapr]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+
+        data = [self.ipr, self.nbr, self.anmxr, self.anmnr, self.rcr,
+                self.xcr, self.ebasr, self.trr, self.tapr, self.tmxr,
+                self.tmnr, self.stpr, self.icr, self.ifr, self.itr,
+                quote_string(self.idr), self.xcapr]
+
+        return ', '.join([str(x) for x in data])
+
+
+class TwoTerminalDCLineInverter(object):
+    def __init__(self, ipi, nbi, anmxi, anmni, rci, xci, ebasi, tri, tapi, tmxi, tmni, stpi, ici, ifi, iti, idi, xcapi):
+        '''This data structure contains Two-Terminal DC Line parameters for the Inverter (third line)
+
+        Args:
+            ipi (int) : bus number
+            nbi (int) : number of bridges
+            anmxi (float) : nominal max firing angle
+            anmni (float) : minimum steady-state firing angle
+            rci (float) : transformer resistance per bridge
+            xci (float) : transformer reactance per bridge
+            ebasi (float) : primary base ac voltage
+            tri (float) : transformer ratio
+            tapi (float) : tap setting
+            tmxi (float) : max tap setting
+            tmni (float) : min tap setting
+            stpi (float) : tap step
+            ici (int) : firing angle measuring bus number
+            ifi (int) : winding 1 side from bus number
+            iti (int) : winding 2 side to bus number
+            idi (str) : circuit identifier
+            xcapi (float) : capacitor resistance per bridge
+        '''
+        self.ipi = int(ipi)
+        self.nbi = int(nbi)
+        self.anmxi = float(anmxi)
+        self.anmni = float(anmni)
+        self.rci = float(rci)
+        self.xci = float(xci)
+        self.ebasi = float(ebasi)
+        self.tri = float(tri)
+        self.tapi = float(tapi)
+        self.tmxi = float(tmxi)
+        self.tmni = float(tmni)
+        self.stpi = float(stpi)
+        self.ici = int(ici)
+        self.ifi = int(ifi)
+        self.iti = int(iti)
+        self.idi = unquote_string(idi)
+        self.xcapi = float(xcapi)
+
+    def __str__(self):
+        data = [self.ipi, self.nbi, self.anmxi, self.anmni, self.rci,
+                self.xci, self.ebasi, self.tri, self.tapi, self.tmxi,
+                self.tmni, self.stpi, self.ici, self.ifi, self.iti,
+                self.idi, self.xcapi]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+
+        data = [self.ipi, self.nbi, self.anmxi, self.anmni, self.rci,
+                self.xci, self.ebasi, self.tri, self.tapi, self.tmxi,
+                self.tmni, self.stpi, self.ici, self.ifi, self.iti,
+                quote_string(self.idi), self.xcapi]
+
+        return ', '.join([str(x) for x in data])
+
+
+class TransformerImpedanceCorrection(object):
+    def __init__(self, index, i, t1=0.0, f1=0.0, t2=0.0, f2=0.0, t3=0.0, f3=0.0, t4=0.0, f4=0.0, t5=0.0, f5=0.0, t6=0.0, f6=0.0, t7=0.0, f7=0.0, t8=0.0, f8=0.0, t9=0.0, f9=0.0, t10=0.0, f10=0.0, t11=0.0, f11=0.0):
+        '''This data structure contains Transformer Impedence Correction Table parameters
+
+        Args:
+            index (int) : unique transformer impedence correction identifier
+            i (int) : transformer impedence correction table number
+            ti (float) : off-nominal turns ratio or phase shift angle
+            fi (float) : scaling factor
+        '''
+        self.index = index
+        self.i = int(i)
+        self.t1 = float(t1)
+        self.f1 = float(f1)
+        self.t2 = float(t2)
+        self.f2 = float(f2)
+        self.t3 = float(t3)
+        self.f3 = float(f3)
+        self.t4 = float(t4)
+        self.f4 = float(f4)
+        self.t5 = float(t5)
+        self.f5 = float(f5)
+        self.t6 = float(t6)
+        self.f6 = float(f6)
+        self.t7 = float(t7)
+        self.f7 = float(f7)
+        self.t8 = float(t8)
+        self.f8 = float(f8)
+        self.t9 = float(t9)
+        self.f9 = float(f9)
+        self.t10 = float(t10)
+        self.f10 = float(f10)
+        self.t11 = float(t11)
+        self.f11 = float(f11)
+
+    def __str__(self):
+        data = [self.i, self.t1, self.f1, self.t2, self.f2, self.t3, self.f3,
+                self.t4, self.f4, self.t5, self.f5, self.t6, self.f6, self.t7,
+                self.f7, self.t8, self.f8, self.t9, self.f9, self.t10, self.f10,
+                self.t11, self.f11]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+
+        data = [self.i, self.t1, self.f1, self.t2, self.f2, self.t3, self.f3,
+                self.t4, self.f4, self.t5, self.f5, self.t6, self.f6, self.t7,
+                self.f7, self.t8, self.f8, self.t9, self.f9, self.t10, self.f10,
+                self.t11, self.f11]
+
+        return ', '.join([str(x) for x in data])
+
+
+class MultiSectionLineGrouping(object):
+    def __init__(self, index, i, j, id, met, *dumi):
+        '''This data structure contains Multi-Section Line Grouping parameters
+
+        Args:
+            index (int) : unique transformer impedence correction identifier
+            i (int) : from bus number
+            j (int) : to bus number
+            id (str) : grouping identifier
+            met (int) : metered end flag
+            dumi (int) : bus numbers of dummy buses
+        '''
+        self.index = index
+        self.i = int(i)
+        self.j = int(j)
+        self.id = unquote_string(id)
+        self.met = int(met)
+        for n, dum in enumerate(dumi):
+            setattr(self, f"dum{n+1}", int(dum))
+
+    def __str__(self):
+        data = [self.i, self.j, self.id, self.met]
+        for i in range(1, 10):
+            if hasattr(self, f"dum{i}"):
+                data.append(getattr(self, f"dum{i}"))
+            else:
+                break
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+
+        data = [self.i, self.j, self.id, self.met]
+        dumi = []
+        for i in range(1, 10):
+            if hasattr(self, f"dum{i}"):
+                data.append(getattr(self, f"dum{i}"))
+            else:
+                break
+
+        return ', '.join([str(x) for x in data])
+
+
+class InterareaTransfer(object):
+    def __init__(self, index, arfrom, arto, trid, ptran):
+        '''This data structure contains Interarea Transfer parameters
+
+        Args:
+            index (int) : unique interarea transfer identifier
+            arfrom (int) : from area identifier
+            arto (int) : to area identifier
+            trid (str) : interarea transfer identifier
+            ptran (float) : MW of transfer
+        '''
+        self.index = index
+        self.arfrom = int(arfrom)
+        self.arto = int(arto)
+        self.trid = unquote_string(trid)
+        self.ptran = float(ptran)
+
+    def __str__(self):
+        data = [self.arfrom, self.arto, self.trid, self.ptran]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+
+        data = [self.arfrom, self.arto, self.trid, self.ptran]
+
+        return ', '.join([str(x) for x in data])
+
+
+class InductionMachine(object):
+    def __init__(self, index, i, id, stat, scode, dcode, area, zone, owner, tcode, bcode, mbase,
+                    ratekv, pcode, pset, h, a, b, d, e, ra, xa, xm, r1, x1, r2, x2, x3, e1, se1,
+                    e2, se2, ia1, ia2, xamult):
+        '''This data structure contains Induction Machine parameters
+
+        Args:
+            index (int) : unique interarea transfer identifier
+            i (int) : bus number
+            id (str) : machine identifier
+            stat (int) : status
+            scode (int) : standard code
+            dcode (int) : design code
+            area (int) : area
+            zone (int) zone
+            owner (int) : owner
+            tcode (int) : type of mechanical load torque
+            bcode (int) : base power code
+            mbase (float) : base power
+            ratekv (float) : rated voltage
+            pcode (int) : scheduled power code
+            pset (float) : scheduled active power
+            h (float) : machine inertia
+            a (float) : constant describing variation of torque with speed
+            b (float) : constant describing variation of torque with speed
+            d (float) : constant describing variation of torque with speed
+            e (float) : constant describing variation of torque with speed
+            ra (float) : armature resistance
+            xa (float) : armature leakage reactance
+            xm (float) : unsaturated magnetizing reactance
+            r1 (float) : resistance of first rotor winding
+            x1 (float) : reactance of first rotor winding
+            r2 (float) : resistance of second rotor winding
+            x2 (float) : reactance of second rotor winding
+            x3 (float) : reactance of third rotor winding
+            e1 (float) : first terminal voltage point
+            se1 (float) : saturation factor at terminal voltage e1
+            e2 (float) : second terminal voltage point
+            se2 (float) : saturation factor at terminal voltage e2
+            ia1 (float) : stator current
+            ia2 (float) : stator current
+            xamult (float) : multiplier for saturated value
+        '''
+        self.index = index
+        self.i = int(i)
+        self.id = unquote_string(id)
+        self.stat = int(stat)
+        self.scode = int(scode)
+        self.dcode = int(dcode)
+        self.area = int(area)
+        self.zone = int(zone)
+        self.owner = int(owner)
+        self.tcode = int(tcode)
+        self.bcode = int(bcode)
+        self.mbase = float(mbase)
+        self.ratekv = float(ratekv)
+        self.pcode = int(pcode)
+        self.pset = float(pset)
+        self.h = float(h)
+        self.a = float(a)
+        self.b = float(b)
+        self.d = float(d)
+        self.e = float(e)
+        self.ra = float(ra)
+        self.xa = float(xa)
+        self.xm = float(xm)
+        self.r1 = float(r1)
+        self.x1 = float(x1)
+        self.r2 = float(r2)
+        self.x2 = float(x2)
+        self.x3 = float(x3)
+        self.e1 = float(e1)
+        self.se1 = float(se1)
+        self.e2 = float(e2)
+        self.se2 = float(se2)
+        self.ia1 = float(ia1)
+        self.ia2 = float(ia2)
+        self.xamult = float(xamult)
+
+    def __str__(self):
+        data = [self.i, self.id, self.stat, self.scode, self.dcode, self.area, self.zone,
+                self.owner, self.tcode, self.bcode, self.mbase, self.ratekv, self.pcode,
+                self.pset, self.h, self.a, self.b, self.d, self.e, self.ra, self.xa,
+                self.xm, self.r1, self.x1, self.r2, self.x2, self.x3, self.e1, self.se1,
+                self.e2, self.se2, self.ia1, self.ia2, self.xamult]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+
+        data = [self.i, self.id, self.stat, self.scode, self.dcode, self.area, self.zone,
+                self.owner, self.tcode, self.bcode, self.mbase, self.ratekv, self.pcode,
+                self.pset, self.h, self.a, self.b, self.d, self.e, self.ra, self.xa,
+                self.xm, self.r1, self.x1, self.r2, self.x2, self.x3, self.e1, self.se1,
+                self.e2, self.se2, self.ia1, self.ia2, self.xamult]
+
+        return ', '.join([str(x) for x in data])
+
+
+class MultiTerminalDCLine(object):
+    def __init__(self, index, params, nconv, ndcbs, ndcln):
+        '''This data structure contains Multi-Terminal DC Line parameters
+
+        Args:
+            index (int) : unique interarea transfer identifier
+            params (MultiTerminalDCLineParameters) : first line of MultiTerminal DC Line entry
+            nconv (list(MultiTerminalDCLineConverter)) : next nconv lines of MutliTerminal DC Line entries
+            ndcbs (list(MultiTerminalDCLineDCBus)) : next ndcbs lines of MutliTerminal DC Line entries
+            ndcln (list(MultiTerminalDCLineDCLink)) : next ndcln lines of MutliTerminal DC Line entries
+        '''
+        self.index = index
+        self.params = params
+        self.converters = nconv
+        self.dc_buses = ndcbs
+        self.dc_links = ndcln
+
+    def __str__(self):
+        data = []
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+        data = [self.params]
+        data.extend(self.converters)
+        data.extend(self.dc_buses)
+        data.extend(self.dc_links)
+        return os.linesep.join([x.to_psse() for x in data])
+
+
+class MultiTerminalDCLineParameters(object):
+    def __init__(self, name, nconv, ndcbs, ndcln, mdc, vconv, vcmod, vconvn):
+        '''This data structure contains MultiTerminal DC Line first-line parameters
+
+        Args:
+            name (str) : name of dc line
+            nconv (int) : number of ac converters
+            ndcbs (int) : number of dc buses
+            ndcln (int) : number of dc links
+            mdc (int) : control mode
+            vconv (int) : bus number of positive pole controlling ac converter station
+            vcmod (float) : mode switch dc voltage
+            vconvn (int) : bus number of negative pole controlling ac converter station
+        '''
+        self.name = unquote_string(name)
+        self.nconv = int(nconv)
+        self.ndcbs = int(ndcbs)
+        self.ndcln = int(ndcln)
+        self.mdc = int(mdc)
+        self.vconv = int(vconv)
+        self.vcmod = float(vcmod)
+        self.vconvn = int(vconvn)
+
+    def __str__(self):
+        data = [quote_string(self.name), self.nconv, self.ndcbs, self.ndcln, self.mdc, self.vconv, self.vcmod, self.vconvn]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+        data = [quote_string(self.name), self.nconv, self.ndcbs, self.ndcln, self.mdc, self.vconv, self.vcmod, self.vconvn]
+        return ', '.join([str(x) for x in data])
+
+
+class MultiTerminalDCLineConverter(object):
+    def __init__(self, ib, n, angmx, angmn, rc, xc, ebas, tr, tap, tpmx, tpmn, tstp, setvl, dcpf, marg, cnvcod):
+        '''This data structure contains MultiTerminal DC Line Converter parameters
+
+        Args:
+            ib (int) : ac converter bus number
+            n (int) : number of bridges in series
+            angmx (float) : nominal max alpha or gamma angle
+            angmn (float) : nominal min alpha or gamma angle
+            rc (float) : commutating resistance per bridge
+            xc (float) : commutating reactance per bridge
+            ebas (float) : primary base ac voltage
+            tr (float) : actual transformer ratio
+            tap (float) : tap setting
+            tpmx (float) : max tap setting
+            tpmn (float) : min tap setting
+            tstp (float) : tap step
+            setvl (float) : converter setpoint
+            dcpf (float) : converter participation factor
+            marg (float) : rectifier margin
+            cnvcod (int) : converter code
+        '''
+        self.ib = int(ib)
+        self.n = int(n)
+        self.angmx = float(angmx)
+        self.angmn = float(angmn)
+        self.rc = float(rc)
+        self.xc = float(xc)
+        self.ebas = float(ebas)
+        self.tr = float(tr)
+        self.tap = float(tap)
+        self.tpmx = float(tpmx)
+        self.tpmn = float(tpmn)
+        self.tstp = float(tstp)
+        self.setvl = float(setvl)
+        self.dcpf = float(dcpf)
+        self.marg = float(marg)
+        self.cnvcod = int(cnvcod)
+
+    def __str__(self):
+        data = [self.ib, self.n, self.angmx, self.angmn, self.rc, self.xc,
+                self.ebas, self.tr, self.tap, self.tpmx, self.tpmn, self.tstp,
+                self.setvl, self.dcpf, self.marg, self.cnvcod]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+        data = [self.ib, self.n, self.angmx, self.angmn, self.rc, self.xc,
+                self.ebas, self.tr, self.tap, self.tpmx, self.tpmn, self.tstp,
+                self.setvl, self.dcpf, self.marg, self.cnvcod]
+        return ', '.join([str(x) for x in data])
+
+
+class MultiTerminalDCLineDCBus(object):
+    def __init__(self, idc, ib, area, zone, dcname, idc2, rgrnd, owner):
+        '''This data structure contains MultiTerminal DC Line DC Bus parameters
+
+        Args:
+            idc (int) : dc bus number
+            ib (int) : ac converter bus number
+            area (int) : area number
+            zone (int) : zone number
+            dcname (str) : identifier
+            idc2 (int) : second dc bus to which idc is connected
+            rgrnd (float) : resistance to ground
+            owner (int) : owner number
+
+        '''
+        self.idc = int(idc)
+        self.ib = int(ib)
+        self.area = int(area)
+        self.zone = int(zone)
+        self.dcname = unquote_string(dcname)
+        self.idc2 = int(idc2)
+        self.rgrnd = float(rgrnd)
+        self.owner = int(owner)
+
+    def __str__(self):
+        data = [self.idc, self.ib, self.area, self.zone, quote_string(self.dcname), self.idc2, self.rgrnd, self.owner]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+        data = [self.idc, self.ib, self.area, self.zone, quote_string(self.dcname), self.idc2, self.rgrnd, self.owner]
+        return ', '.join([str(x) for x in data])
+
+
+class MultiTerminalDCLineDCLink(object):
+    def __init__(self, idc, jdc, dcckt, met, rdc, ldc):
+        '''This data structure contains MultiTerminal DC Line DC Link parameters
+
+        Args:
+            idc (int) : from bus dc number
+            jdc (int) : to bus dc number
+            dcckt (str) : circuit identifier
+            met (int) : metered end flag
+            rdc (float) : dc link resistance
+            ldc (float) : dc link inductance
+        '''
+        self.idc = int(idc)
+        self.jdc = int(jdc)
+        self.dcckt = unquote_string(dcckt)
+        self.met = int(met)
+        self.rdc = float(rdc)
+        self.ldc = float(ldc)
+
+    def __str__(self):
+        data = [self.idc, self.jdc, quote_string(self.dcckt), self.met, self.rdc, self.ldc]
+        return ' '.join([str(x) for x in data])
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def validate(self):
+        '''Checks that this data structure conforms to the pss/e data
+        specification
+        '''
+        return NotImplemented
+
+    def to_psse(self):
+        '''Returns: a pss/e encoding of this data structure as a string'''
+        data = [self.idc, self.jdc, quote_string(self.dcckt), self.met, self.rdc, self.ldc]
+        return ', '.join([str(x) for x in data])
