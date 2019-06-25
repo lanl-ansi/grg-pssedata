@@ -64,8 +64,8 @@ class Case(object):
             ic (int): case type, 0 for base, 1 for incremental
             sbase (float): the system MVA base value (MVA)
             rev (int): file type version number
-            xfrrat (float): transformer rating units
-            nxfrat (float): units of branch ratings
+            xfrrat (int): transformer rating units
+            nxfrat (int): units of branch ratings
             basfrq (float): base frequency (Hertz)
             record1 (string): system description part 1, up to 60 characters
             record2 (string): system description part 2, up to 60 characters
