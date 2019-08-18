@@ -41,6 +41,7 @@ Changelog
 
 **staged**
 
+- Drop support for python 2.7 and 3.4
 - Fixed bug where parsing lines with commas or comment characters inside single quotes would fail
 - Added support for FACTS Devices, Two-Terminal DC Lines, VSC DC Lines, Multi-Terminal DC Lines, Interarea Transfers, Transformer Impedence Correction Tables, Induction Machines, and Multi-Section Line Groupings
 

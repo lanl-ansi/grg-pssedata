@@ -2,10 +2,9 @@ language: python
 os:
   - linux
 python:
-  - "2.7"
-  - "3.4"
   - "3.5"
   - "3.6"
+  - "3.7"
 install:
   - pip install tox-travis
   - pip install codecov
@@ -22,4 +21,4 @@ deploy:
     on:
       tags: true
       branch: master
-      condition: $TRAVIS_PYTHON_VERSION = '3.6'
+      condition: $TRAVIS_PYTHON_VERSION = '3.7'
