@@ -1,6 +1,6 @@
 """a package for reading and writing of pss/e data files"""
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 # import standard entry points to the code
 from grg_pssedata import io
