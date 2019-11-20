@@ -130,15 +130,21 @@ def parse_psse_case_lines(lines):
     if len(lines) < 3: # need at base values and record
         raise PSSEDataParsingError('psse case has {} lines and at least 3 are required'.format(len(lines)))
 
-
     (ic, sbase, rev, xfrrat, nxfrat, basefrq), comment = parse_line(lines[0], LineRequirements(0, 6, 6, "header"))
     print_err('case data: {} {} {} {} {} {}'.format(ic, sbase, rev, xfrrat, nxfrat, basefrq))
 
-    if int(ic) != 0: # validity checks may fail on "change data"
+    if len(ic.strip()) > 0 and not (ic.strip() == "0"): # note validity checks may fail on "change data"
         raise PSSEDataParsingError('ic value of {} given, only a value of 0 is supported'.format(ic))
 
-    if int(float(rev)) != 33:
-        warnings.warn('PSEE version {} given but only version 33 is supported, parser may not function correctly.'.format(rev.strip()), PSSEDataWarning)
+    version_id = 33
+    if len(rev.strip()) > 0:
+        try:
+            version_id = int(float(rev))
+        except ValueError:
+             warnings.warn('assuming PSSE version 33, given version value "{}".'.format(rev.strip()), PSSEDataWarning)
+
+    if version_id != 33:
+        warnings.warn('PSSE version {} given but only version 33 is supported, parser may not function correctly.'.format(rev.strip()), PSSEDataWarning)
 
     record1 = lines[1].strip('\n')
     record2 = lines[2].strip('\n')
@@ -172,7 +178,6 @@ def parse_psse_case_lines(lines):
         buses.append(Bus(*line_parts))
         line_index += 1
     print_err('parsed {} buses'.format(len(buses)))
-
     if parse_line(lines[line_index])[0][0].strip() != psse_record_terminus:
         line_index += 1
 
