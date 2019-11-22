@@ -22,7 +22,7 @@ def _guard_none(fun, val):
 def _set_defaults(args, defaults):
     assert(len(args) == len(defaults))
     for i,val in enumerate(defaults):
-        if args[i] != None and len(args[i].strip()) == 0:
+        if args[i] is not None and len(args[i].strip()) == 0:
             args[i] = defaults[i]
     return args
 
@@ -671,7 +671,7 @@ class SwitchedShunt(object):
 
         for key in ['n1','n2','n3','n4','n5','n6','n7','n8']:
             value = getattr(self, key)
-            if value != None:
+            if value is not None:
                 _check_range(value, 'bank {}'.format(key), 'switched shunt', self.index, 0, 9)
 
     def to_psse(self):
@@ -2431,6 +2431,7 @@ class MultiTerminalDCLine(object):
         data.extend(self.dc_buses)
         data.extend(self.dc_links)
         return os.linesep.join([x.to_psse() for x in data])
+
 
 MTDCL_PARAMETER_DEFAULTS = [0, 0.0, 0]
 class MultiTerminalDCLineParameters(object):

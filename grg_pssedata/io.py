@@ -116,7 +116,7 @@ def parse_line(line, line_reqs=None):
 
     line_parts = re.split(r",(?=(?:[^']*'[^']*')*[^']*$)", line)
 
-    if line_reqs != None:
+    if line_reqs is not None:
         if len(line_parts) < line_reqs.min_values:
             raise PSSEDataParsingError('on psse data line {} in the "{}" section, at least {} values were expected but only {} where found.\nparsed: {}'.format(line_reqs.line_index, line_reqs.section, line_reqs.min_values, len(line_parts), line_parts))
         if len(line_parts) > line_reqs.max_values:
