@@ -19,6 +19,14 @@ def _guard_none(fun, val):
         return fun(val)
 
 
+def _set_defaults(args, defaults):
+    assert(len(args) == len(defaults))
+    for i,val in enumerate(defaults):
+        if args[i] is not None and len(args[i].strip()) == 0:
+            args[i] = defaults[i]
+    return args
+
+
 def _check_range(value, name, component_type, component_id, lb, ub):
     if not (value >= lb and value <= ub):
         warnings.warn('the {} value {} on {} {} is not in the valid range {} to {}'
@@ -51,6 +59,7 @@ def quote_string(s):
     return '\'{}\''.format(s)
 
 
+CASE_DEFAULTS = [0, 100.0, 33, 0, 0, 60]
 class Case(object):
     def __init__(self, ic, sbase, rev, xfrrat, nxfrat, basfrq, record1, record2,
         buses, loads, fixed_shunts, generators, branches, transformers, areas,
@@ -89,6 +98,10 @@ class Case(object):
             gnes (list of TBD): general network elements
             induction_machines (list of TBD): induction machines
         '''
+
+        args = [ic, sbase, rev, xfrrat, nxfrat, basfrq]
+        _set_defaults(args, CASE_DEFAULTS)
+        ic, sbase, rev, xfrrat, nxfrat, basfrq = args
 
         self.ic = int(ic)
         self.sbase = float(sbase)
@@ -332,6 +345,8 @@ class Case(object):
         return os.linesep.join(psse_lines)
 
 
+
+BUS_DEFAULTS = ["            ", 0.0, 1, 1, 1, 1, 1.0, 0.0, 0.9, 1.1, 0.9, 1.1]
 class Bus(object):
     def __init__(self, i, name, basekv, ide, area, zone, owner, vm, va, nvhi, nvlo, evhi, evlo):
         '''This data structure contains bus parameters.
@@ -351,6 +366,10 @@ class Bus(object):
             evhi (float): voltage magnitude upper bound, emergency conditions (volts p.u.) (default = 1.1)
             evlo (float): voltage magnitude lower bound, emergency conditions (volts p.u.) (default = 0.9)
         '''
+
+        args = [name, basekv, ide, area, zone, owner, vm, va, nvhi, nvlo, evhi, evlo]
+        _set_defaults(args, BUS_DEFAULTS)
+        name, basekv, ide, area, zone, owner, vm, va, nvhi, nvlo, evhi, evlo = args
 
         self.i = int(i)
         self.name = unquote_string(name)
@@ -418,8 +437,9 @@ class Bus(object):
         return ', '.join([str(x) for x in data])
 
 
+LOAD_DEFAULTS = [1, 1, 1, 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 1, 0]
 class Load(object):
-    def __init__(self, index, i, id, status, area, zone, pl, ql, ip, iq, yp, yq, owner, scale, intrpt=0):
+    def __init__(self, index, i, id, status, area, zone, pl, ql, ip, iq, yp, yq, owner, scale, intrpt="0"):
         '''This data structure contains load parameters.
 
         Args:
@@ -439,6 +459,11 @@ class Load(object):
             scale (int): scaling flag (scalable = 1, fixed = 0) (default = 1)
             intrpt (int): interruptible flag, (interruptible = 1, non-interruptible = 0) (optional, default = 0)
         '''
+
+        args = [id, status, area, zone, pl, ql, ip, iq, yp, yq, owner, scale, intrpt]
+        _set_defaults(args, LOAD_DEFAULTS)
+        id, status, area, zone, pl, ql, ip, iq, yp, yq, owner, scale, intrpt = args
+
         self.index = int(index)
         self.i = int(i)
         self.id = unquote_string(id)
@@ -493,6 +518,7 @@ class Load(object):
         return ', '.join([str(x) for x in data])
 
 
+FIXED_SHUNT_DEFAULTS = [1, 1, 0.0, 0.0]
 class FixedShunt(object):
     def __init__(self, index, i, id, status, gl, bl):
         '''This data structure contains fixed shunt parameters
@@ -505,6 +531,11 @@ class FixedShunt(object):
             gl (float): the conductance to ground in MW at one per unit voltage (default = 0.0)
             bl (float): the susceptance to ground in MVar at one per unit voltage (default = 0.0)
         '''
+
+        args = [id, status, gl, bl]
+        _set_defaults(args, FIXED_SHUNT_DEFAULTS)
+        id, status, gl, bl = args
+
         self.index = int(index)
         self.i = int(i)
         self.id = unquote_string(id)
@@ -541,6 +572,7 @@ class FixedShunt(object):
         return ', '.join([str(x) for x in data])
 
 
+SWITCHED_SHUNT_DEFAULTS = [1, 0, 1, 1.0, 1.0, 0, 100.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 class SwitchedShunt(object):
     def __init__(self, index, i, modsw, adjm, stat, vswhi, vswlo, swrem, rmpct, rmidnt, binit, n1, b1,
                     n2=None, b2=None, n3=None, b3=None, n4=None, b4=None, n5=None, b5=None,
@@ -576,6 +608,11 @@ class SwitchedShunt(object):
             n8 (int): the number of steps in block 8 (default = 0)
             b8 (float): the susceptance increment of block 8 (default = 0.0)
         '''
+
+        args = [modsw, adjm, stat, vswhi, vswlo, swrem, rmpct, rmidnt, binit, n1, b1, n2, b2, n3, b3, n4, b4, n5, b5, n6, b6, n7, b7, n8, b8]
+        _set_defaults(args, SWITCHED_SHUNT_DEFAULTS)
+        modsw, adjm, stat, vswhi, vswlo, swrem, rmpct, rmidnt, binit, n1, b1, n2, b2, n3, b3, n4, b4, n5, b5, n6, b6, n7, b7, n8, b8 = args
+
         self.index = int(index)
         self.i = int(i)
         self.modsw = int(modsw)
@@ -634,7 +671,7 @@ class SwitchedShunt(object):
 
         for key in ['n1','n2','n3','n4','n5','n6','n7','n8']:
             value = getattr(self, key)
-            if value != None:
+            if value is not None:
                 _check_range(value, 'bank {}'.format(key), 'switched shunt', self.index, 0, 9)
 
     def to_psse(self):
@@ -656,7 +693,7 @@ class SwitchedShunt(object):
         return ', '.join([str(x) for x in data])
 
 
-
+GENERATOR_DEFAULTS = [1, 0.0, 0.0, 9999.0, -9999.0, 1.0, 0, 100.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1, 100.0, 9999.0, -9999.0, 1, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 0, 1.0]
 class Generator(object):
     def __init__(self, index, i, id, pg, qg, qt, qb, vs, ireg, mbase, zr, zx,
                     rt, xt, gtap, stat, rmpct, pt, pb, o1, f1, o2, f2, o3, f3, o4, f4,
@@ -694,6 +731,11 @@ class Generator(object):
             wmod (int): wind machine control mode, not-wind = 0, Q limits = 1, P limits as Q limits = 2, power factor = 4
             wpf (float): wind power factor (used when wmod is 2 or 3)
         '''
+
+        args = [id, pg, qg, qt, qb, vs, ireg, mbase, zr, zx, rt, xt, gtap, stat, rmpct, pt, pb, o1, f1, o2, f2, o3, f3, o4, f4, wmod, wpf]
+        _set_defaults(args, GENERATOR_DEFAULTS)
+        id, pg, qg, qt, qb, vs, ireg, mbase, zr, zx, rt, xt, gtap, stat, rmpct, pt, pb, o1, f1, o2, f2, o3, f3, o4, f4, wmod, wpf = args
+
         self.index = int(index)
         self.i = int(i)
         self.id = unquote_string(id)
@@ -777,7 +819,7 @@ class Generator(object):
         return ', '.join([str(x) for x in data])
 
 
-
+BRANCH_DEFAULTS = [1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 1, 0.0, 1, 1.0, 0, 1.0, 0, 1.0, 0, 1.0]
 class Branch(object):
     def __init__(self, index, i, j, ckt, r, x, b, ratea, rateb, ratec, gi, bi, gj, bj, st, met, len, o1, f1, o2, f2, o3, f3, o4, f4):
         '''This data structure contains branch parameters.
@@ -809,6 +851,10 @@ class Branch(object):
             o4 (int): owner four id, 1-9999 (default = the owner of the connecting bus)
             f4 (float): owner four fraction of total ownership (default = 1.0)
         '''
+
+        args = [ckt, b, ratea, rateb, ratec, gi, bi, gj, bj, st, met, len, o1, f1, o2, f2, o3, f3, o4, f4]
+        _set_defaults(args, BRANCH_DEFAULTS)
+        ckt, b, ratea, rateb, ratec, gi, bi, gj, bj, st, met, len, o1, f1, o2, f2, o3, f3, o4, f4 = args
 
         self.index = int(index)
         self.i = int(i)
@@ -994,6 +1040,7 @@ class ThreeWindingTransformer(object):
 
 
 
+TRANSFORMER_FL_DEFAULTS = [0, 1, 1, 1, 1, 0.0, 0.0, 2, "            ", 1, 1, 1.0, 0, 1.0, 0, 1.0, 0, 1.0, "            "]
 class TransformerParametersFirstLine(object):
     def __init__(self, i, j, k, ckt, cw, cz, cm, mag1, mag2, nmetr, name, stat, o1, f1, o2, f2, o3, f3, o4, f4, vecgrp):
         '''This data structure contains transformer parameters that are common to two and three winding transformers.
@@ -1021,6 +1068,10 @@ class TransformerParametersFirstLine(object):
             f4 (float): owner four fraction of total ownership (default = 1.0)
             vecgrp (string): vector group identifier (default = '            ')
         '''
+
+        args = [k, ckt, cw, cz, cm, mag1, mag2, nmetr, name, stat, o1, f1, o2, f2, o3, f3, o4, f4, vecgrp]
+        _set_defaults(args, TRANSFORMER_FL_DEFAULTS)
+        k, ckt, cw, cz, cm, mag1, mag2, nmetr, name, stat, o1, f1, o2, f2, o3, f3, o4, f4, vecgrp = args
 
         self.i = int(i)
         self.j = int(j)
@@ -1090,6 +1141,7 @@ class TransformerParametersFirstLine(object):
 
 
 
+TRANSFORMER_SL_DEFAULTS = [0.0, 100.0, 0.0, 100.0, 0.0, 100.0, 1.0, 0.0]
 class TransformerParametersSecondLine(object):
     def __init__(self, r12, x12, sbase12, r23, x23, sbase23, r31, x31, sbase31, vmstar, anstar):
         '''This data structure contains transformer parameters for the second line of three winding transformers.
@@ -1107,6 +1159,10 @@ class TransformerParametersSecondLine(object):
             vmstar (float): the voltage magnitude of the start point (default 1.0)
             anstar (float): the voltage angle of the start point (default 0.0)
         '''
+
+        args = [r12, sbase12, r23, sbase23, r31, sbase31, vmstar, anstar]
+        _set_defaults(args, TRANSFORMER_SL_DEFAULTS)
+        r12, sbase12, r23, sbase23, r31, sbase31, vmstar, anstar = args
 
         self.r12 = float(r12)
         self.x12 = float(x12)
@@ -1152,6 +1208,8 @@ class TransformerParametersSecondLine(object):
         return ', '.join([str(x) for x in data])
 
 
+
+TRANSFORMER_SLS_DEFAULTS = [0.0, 100.0]
 class TransformerParametersSecondLineShort(object):
     def __init__(self, r12, x12, sbase12):
         '''This data structure contains transformer parameters for the second line of two winding transformers.
@@ -1161,6 +1219,10 @@ class TransformerParametersSecondLineShort(object):
             x12 (float): reactance between terminal i and j
             sbase12 (float): the MVA base between terminal i and j
         '''
+
+        args = [r12, sbase12]
+        _set_defaults(args, TRANSFORMER_SLS_DEFAULTS)
+        r12, sbase12 = args
 
         self.r12 = float(r12)
         self.x12 = float(x12)
@@ -1194,6 +1256,7 @@ class TransformerParametersSecondLineShort(object):
         return ', '.join([str(x) for x in data])
 
 
+TRANSFORMER_WINDING_DEFAULTS = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 1.1, 0.9, 1.1, 0.9, 33, 0, 0.0, 0.0, 0.0]
 class TransformerWinding(object):
     def __init__(self, index, windv, nomv, ang, rata, ratb, ratc, cod, cont, rma, rmi, vma, vmi, ntp, tab, cr, cx, cnxa):
         '''This data structure contains transformer winding parameters.
@@ -1218,6 +1281,10 @@ class TransformerWinding(object):
             cx (float): load drop compensation reactance (p.u.)
             cnxa (float): winding connection angle (degrees) (default = 0.0)
         '''
+
+        args = [windv, nomv, ang, rata, ratb, ratc, cod, cont, rma, rmi, vma, vmi, ntp, tab, cr, cx, cnxa]
+        _set_defaults(args, TRANSFORMER_WINDING_DEFAULTS)
+        windv, nomv, ang, rata, ratb, ratc, cod, cont, rma, rmi, vma, vmi, ntp, tab, cr, cx, cnxa = args
 
         self.index = int(index)
         self.windv = float(windv)
@@ -1276,6 +1343,7 @@ class TransformerWinding(object):
         return ', '.join([str(x) for x in data])
 
 
+TRANSFORMER_WINDING_SHORT_DEFAULTS = [1.0, 0.0]
 class TransformerWindingShort(object):
     def __init__(self, index, windv, nomv):
         '''This data structure contains the shortend transformer winding
@@ -1286,6 +1354,10 @@ class TransformerWindingShort(object):
             windv (float): off-nominal turn ratio (p.u.) (default = 1.0)
             nomv (float): base voltage (kilo volts)
         '''
+
+        args = [windv, nomv]
+        _set_defaults(args, TRANSFORMER_WINDING_SHORT_DEFAULTS)
+        windv, nomv = args
 
         self.index = int(index)
         self.windv = float(windv)
@@ -1320,8 +1392,10 @@ class TransformerWindingShort(object):
         return ', '.join([str(x) for x in data])
 
 
+
+AREA_DEFAULTS = [0, 0.0, 10.0, "            "]
 class Area(object):
-    def __init__(self, i, isw=0, pdes=0.0, ptol=0.0, arnam=''):
+    def __init__(self, i, isw="0", pdes="0.0", ptol="0.0", arnam=''):
         '''This data structure contains area interchange parameters.
 
         Args:
@@ -1331,6 +1405,10 @@ class Area(object):
             ptol (float): interchange tolerance (MW += out)
             arnam (string): area name, 8 characters, must be enclosed in single quotes
         '''
+
+        args = [isw, pdes, ptol, arnam]
+        _set_defaults(args, AREA_DEFAULTS)
+        isw, pdes, ptol, arnam = args
 
         self.i = int(i)
         self.isw = int(isw)
@@ -1367,7 +1445,7 @@ class Area(object):
         return ', '.join([str(x) for x in data])
 
 
-
+ZONE_DEFAULTS = ["            "]
 class Zone(object):
     def __init__(self, i, zoname):
         '''This data structure contains zone parameters.
@@ -1376,6 +1454,10 @@ class Zone(object):
             i (int): the identifier of the zone
             zoname (string): zone name
         '''
+
+        args = [zoname]
+        _set_defaults(args, ZONE_DEFAULTS)
+        zoname = args[0]
 
         self.i = int(i)
         self.zoname = unquote_string(zoname)
@@ -1410,6 +1492,7 @@ class Zone(object):
         return ', '.join([str(x) for x in data])
 
 
+OWNER_DEFAULTS = ["            "]
 class Owner(object):
     def __init__(self, i, owname):
         '''This data structure contains owner parameters.
@@ -1418,6 +1501,10 @@ class Owner(object):
             i (int): the identifier of the owner
             owname (string): owner name
         '''
+
+        args = [owname]
+        _set_defaults(args, OWNER_DEFAULTS)
+        owname = args[0]
 
         self.i = int(i)
         self.owname = unquote_string(owname)
@@ -1450,8 +1537,9 @@ class Owner(object):
         return ', '.join([str(x) for x in data])
 
 
+FACTS_DEFAULTS = [0, 1, 0.0, 0.0, 1.0, 9999.0, 9999.0, 0.9, 1.1, 1.0, 0.0, 0.05, 100.0, 1, 0.0, 0.0, 0, 0, ""]
 class FACTSDevice(object):
-    def __init__(self, index, name, i, j, mode, pdes, qdes, vset, shmx, trmx, vtmn, vtmx, vsmx, imx, linx, rmpct, owner, set1, set2, vsref, remot=0, mname=''):
+    def __init__(self, index, name, i, j, mode, pdes, qdes, vset, shmx, trmx, vtmn, vtmx, vsmx, imx, linx, rmpct, owner, set1, set2, vsref, remot="0", mname=''):
         '''This data structure contains FACTS device parameters.
 
         Args:
@@ -1478,6 +1566,11 @@ class FACTSDevice(object):
             remot (int) : bus number of bus regulated by shunt element
             mname (str) : name of the IPFC master FACTS Device
         '''
+
+        args = [j, mode, pdes, qdes, vset, shmx, trmx, vtmn, vtmx, vsmx, imx, linx, rmpct, owner, set1, set2, vsref, remot, mname]
+        _set_defaults(args, FACTS_DEFAULTS)
+        j, mode, pdes, qdes, vset, shmx, trmx, vtmn, vtmx, vsmx, imx, linx, rmpct, owner, set1, set2, vsref, remot, mname = args
+
         self.index = index
         self.name = unquote_string(name)
         self.i = int(i)
@@ -1576,8 +1669,10 @@ class VSCDCLine(object):
         return os.linesep.join([x.to_psse() for x in data])
 
 
+
+VSC_DCL_DEFAULTS = [1, 1, 1.0, 0, 1.0, 0, 1.0, 0, 1.0]
 class VSCDCLineParameters(object):
-    def __init__(self, name, mdc, rdc, o1=0, f1=1, o2=0, f2=1, o3=0, f3=1, o4=0, f4=1):
+    def __init__(self, name, mdc, rdc, o1="0", f1="1", o2="0", f2="1", o3="0", f3="1", o4="0", f4="1"):
         '''This data structure contains VSC DC line first-line parameters
 
         Args:
@@ -1587,6 +1682,11 @@ class VSCDCLineParameters(object):
             oi (int) : owner number
             fi (float) : fraction of total ownership assigned to oi
         '''
+
+        args = [mdc, o1, f1, o2, f2, o3, f3, o4, f4]
+        _set_defaults(args, VSC_DCL_DEFAULTS)
+        mdc, o1, f1, o2, f2, o3, f3, o4, f4 = args
+
         self.name = unquote_string(name)
         self.mdc = int(mdc)
         self.rdc = float(rdc)
@@ -1627,8 +1727,10 @@ class VSCDCLineParameters(object):
         return ', '.join([str(x) for x in data])
 
 
+
+VSC_DCC_DEFAULTS = [1, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 9999.0, -9999.0, 0, 100.0]
 class VSCDCLineConverter(object):
-    def __init__(self, ibus, type, mode, dcset, acset, aloss, bloss, minloss, smax, imax, pwf, maxq, minq, remot=0, rmpct=100.0):
+    def __init__(self, ibus, type, mode, dcset, acset, aloss, bloss, minloss, smax, imax, pwf, maxq, minq, remot="0", rmpct="100.0"):
         '''This data structure contains VSC DC Line Converter parameters
 
         Args:
@@ -1648,6 +1750,11 @@ class VSCDCLineConverter(object):
             remot (int) : bus number of remote regulating bus
             rmpct (float) : percent of Mvar required to hold bus voltage
         '''
+
+        args = [mode, acset, aloss, bloss, minloss, smax, imax, pwf, maxq, minq, remot, rmpct]
+        _set_defaults(args, VSC_DCC_DEFAULTS)
+        mode, acset, aloss, bloss, minloss, smax, imax, pwf, maxq, minq, remot, rmpct = args
+
         self.ibus = int(ibus)
         self.type = int(type)
         self.mode = int(mode)
@@ -1694,6 +1801,7 @@ class VSCDCLineConverter(object):
         return ', '.join([str(x) for x in data])
 
 
+
 class TwoTerminalDCLine(object):
     def __init__(self, index, params, rectifier, inverter):
         '''This data structure contains Two-Terminal DC Line parameters.
@@ -1735,6 +1843,7 @@ class TwoTerminalDCLine(object):
         return os.linesep.join([x.to_psse() for x in data])
 
 
+TTDCL_PARAMETER_DEFAULTS = [0, 0.0, 0.0, 0.0, "I", 0.0, 20, 1.0]
 class TwoTerminalDCLineParameters(object):
     def __init__(self, name, mdc, rdc, setvl, vschd, vcmod, rcomp, delti, meter, dcvmin, cccitmx, cccacc):
         '''This data structure contains Two-Terminal DC Line parameters for the first line of the data entry
@@ -1753,6 +1862,11 @@ class TwoTerminalDCLineParameters(object):
             cccitmx (int) : iteration limit for solution proceedure
             cccacc (float) : acceleration factor for solution proceedure
         '''
+
+        args = [mdc, vcmod, rcomp, delti, meter, dcvmin, cccitmx, cccacc]
+        _set_defaults(args, TTDCL_PARAMETER_DEFAULTS)
+        mdc, vcmod, rcomp, delti, meter, dcvmin, cccitmx, cccacc = args
+
         self.name = unquote_string(name)
         self.mdc = int(mdc)
         self.rdc = float(rdc)
@@ -1797,6 +1911,8 @@ class TwoTerminalDCLineParameters(object):
 
         return ', '.join([str(x) for x in data])
 
+
+TTDCL_RECTIFIER_DEFAULTS = [1.0, 1.0, 1.5, 0.51, 0.00625, 0, 0, 0, "1", 0.0]
 class TwoTerminalDCLineRectifier(object):
     def __init__(self, ipr, nbr, anmxr, anmnr, rcr, xcr, ebasr, trr, tapr, tmxr, tmnr, stpr, icr, ifr, itr, idr, xcapr):
         '''This data structure contains Two-Terminal DC Line parameters for the Rectifier (second line)
@@ -1820,6 +1936,11 @@ class TwoTerminalDCLineRectifier(object):
             idr (str) : circuit identifier
             xcapr (float) : capacitor resistance per bridge
         '''
+
+        args = [trr, tapr, tmxr, tmnr, stpr, icr, ifr, itr, idr, xcapr]
+        _set_defaults(args, TTDCL_RECTIFIER_DEFAULTS)
+        trr, tapr, tmxr, tmnr, stpr, icr, ifr, itr, idr, xcapr = args
+
         self.ipr = int(ipr)
         self.nbr = int(nbr)
         self.anmxr = float(anmxr)
@@ -1872,6 +1993,8 @@ class TwoTerminalDCLineRectifier(object):
         return ', '.join([str(x) for x in data])
 
 
+
+TTDCL_INVERTER_DEFAULTS = [1.0, 1.0, 1.5, 0.51, 0.00625, 0, 0, 0, "1", 0.0]
 class TwoTerminalDCLineInverter(object):
     def __init__(self, ipi, nbi, anmxi, anmni, rci, xci, ebasi, tri, tapi, tmxi, tmni, stpi, ici, ifi, iti, idi, xcapi):
         '''This data structure contains Two-Terminal DC Line parameters for the Inverter (third line)
@@ -1895,6 +2018,11 @@ class TwoTerminalDCLineInverter(object):
             idi (str) : circuit identifier
             xcapi (float) : capacitor resistance per bridge
         '''
+
+        args = [tri, tapi, tmxi, tmni, stpi, ici, ifi, iti, idi, xcapi]
+        _set_defaults(args, TTDCL_INVERTER_DEFAULTS)
+        tri, tapi, tmxi, tmni, stpi, ici, ifi, iti, idi, xcapi = args
+
         self.ipi = int(ipi)
         self.nbi = int(nbi)
         self.anmxi = float(anmxi)
@@ -1947,8 +2075,9 @@ class TwoTerminalDCLineInverter(object):
         return ', '.join([str(x) for x in data])
 
 
+IMPEDANCE_CORRECTION_DEFAULTS = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 class TransformerImpedanceCorrection(object):
-    def __init__(self, index, i, t1=0.0, f1=0.0, t2=0.0, f2=0.0, t3=0.0, f3=0.0, t4=0.0, f4=0.0, t5=0.0, f5=0.0, t6=0.0, f6=0.0, t7=0.0, f7=0.0, t8=0.0, f8=0.0, t9=0.0, f9=0.0, t10=0.0, f10=0.0, t11=0.0, f11=0.0):
+    def __init__(self, index, i, t1="0.0", f1="0.0", t2="0.0", f2="0.0", t3="0.0", f3="0.0", t4="0.0", f4="0.0", t5="0.0", f5="0.0", t6="0.0", f6="0.0", t7="0.0", f7="0.0", t8="0.0", f8="0.0", t9="0.0", f9="0.0", t10="0.0", f10="0.0", t11="0.0", f11="0.0"):
         '''This data structure contains Transformer Impedence Correction Table parameters
 
         Args:
@@ -1957,6 +2086,11 @@ class TransformerImpedanceCorrection(object):
             ti (float) : off-nominal turns ratio or phase shift angle
             fi (float) : scaling factor
         '''
+
+        args = [t1, f1, t2, f2, t3, f3, t4, f4, t5, f5, t6, f6, t7, f7, t8, f8, t9, f9, t10, f10, t11, f11]
+        _set_defaults(args, IMPEDANCE_CORRECTION_DEFAULTS)
+        t1, f1, t2, f2, t3, f3, t4, f4, t5, f5, t6, f6, t7, f7, t8, f8, t9, f9, t10, f10, t11, f11 = args
+
         self.index = index
         self.i = int(i)
         self.t1 = float(t1)
@@ -2016,6 +2150,7 @@ class TransformerImpedanceCorrection(object):
         return ', '.join([str(x) for x in data])
 
 
+MULTISECTION_LINE_DEFAULTS = ["&1", 1]
 class MultiSectionLineGrouping(object):
     def __init__(self, index, i, j, id, met, *dumi):
         '''This data structure contains Multi-Section Line Grouping parameters
@@ -2028,6 +2163,11 @@ class MultiSectionLineGrouping(object):
             met (int) : metered end flag
             dumi (int) : bus numbers of dummy buses
         '''
+
+        args = [id, met]
+        _set_defaults(args, MULTISECTION_LINE_DEFAULTS)
+        id, met = args
+
         self.index = index
         self.i = int(i)
         self.j = int(j)
@@ -2075,6 +2215,7 @@ class MultiSectionLineGrouping(object):
         return ', '.join([str(x) for x in data])
 
 
+INTERAREA_TRANSFER_DEFAULTS = [1, 0.0]
 class InterareaTransfer(object):
     def __init__(self, index, arfrom, arto, trid, ptran):
         '''This data structure contains Interarea Transfer parameters
@@ -2086,6 +2227,11 @@ class InterareaTransfer(object):
             trid (str) : interarea transfer identifier
             ptran (float) : MW of transfer
         '''
+
+        args = [trid, ptran]
+        _set_defaults(args, INTERAREA_TRANSFER_DEFAULTS)
+        trid, ptran = args
+
         self.index = index
         self.arfrom = int(arfrom)
         self.arto = int(arto)
@@ -2120,6 +2266,7 @@ class InterareaTransfer(object):
         return ', '.join([str(x) for x in data])
 
 
+INDUCTION_MACHINE_DEFAULTS = [1, 1, 1, 2, 1, 1, 1, 1, 1, 100.0, 0.0, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 2.5, 999.0, 999.0, 999.0, 999.0, 0.0, 1.0, 0.0, 1.2, 0.0, 0.0, 0.0, 1]
 class InductionMachine(object):
     def __init__(self, index, i, id, stat, scode, dcode, area, zone, owner, tcode, bcode, mbase,
                     ratekv, pcode, pset, h, a, b, d, e, ra, xa, xm, r1, x1, r2, x2, x3, e1, se1,
@@ -2163,6 +2310,11 @@ class InductionMachine(object):
             ia2 (float) : stator current
             xamult (float) : multiplier for saturated value
         '''
+
+        args = [id, stat, scode, dcode, area, zone, owner, tcode, bcode, mbase, ratekv, pcode, h, a, b, d, e, ra, xa, xm, r1, x1, r2, x2, x3, e1, se1, e2, se2, ia1, ia2, xamult]
+        _set_defaults(args, INDUCTION_MACHINE_DEFAULTS)
+        id, stat, scode, dcode, area, zone, owner, tcode, bcode, mbase, ratekv, pcode, h, a, b, d, e, ra, xa, xm, r1, x1, r2, x2, x3, e1, se1, e2, se2, ia1, ia2, xamult = args
+
         self.index = index
         self.i = int(i)
         self.id = unquote_string(id)
@@ -2281,6 +2433,7 @@ class MultiTerminalDCLine(object):
         return os.linesep.join([x.to_psse() for x in data])
 
 
+MTDCL_PARAMETER_DEFAULTS = [0, 0.0, 0]
 class MultiTerminalDCLineParameters(object):
     def __init__(self, name, nconv, ndcbs, ndcln, mdc, vconv, vcmod, vconvn):
         '''This data structure contains MultiTerminal DC Line first-line parameters
@@ -2295,6 +2448,11 @@ class MultiTerminalDCLineParameters(object):
             vcmod (float) : mode switch dc voltage
             vconvn (int) : bus number of negative pole controlling ac converter station
         '''
+
+        args = [mdc, vcmod, vconvn]
+        _set_defaults(args, MTDCL_PARAMETER_DEFAULTS)
+        mdc, vcmod, vconvn = args
+
         self.name = unquote_string(name)
         self.nconv = int(nconv)
         self.ndcbs = int(ndcbs)
@@ -2330,6 +2488,8 @@ class MultiTerminalDCLineParameters(object):
         return ', '.join([str(x) for x in data])
 
 
+
+MTDCL_CONVERTER_DEFAULTS = [1.0, 1.0, 1.5, 0.51, 0.00625, 1, 0.0, 1]
 class MultiTerminalDCLineConverter(object):
     def __init__(self, ib, n, angmx, angmn, rc, xc, ebas, tr, tap, tpmx, tpmn, tstp, setvl, dcpf, marg, cnvcod):
         '''This data structure contains MultiTerminal DC Line Converter parameters
@@ -2352,6 +2512,11 @@ class MultiTerminalDCLineConverter(object):
             marg (float) : rectifier margin
             cnvcod (int) : converter code
         '''
+
+        args = [tr, tap, tpmx, tpmn, tstp, dcpf, marg, cnvcod]
+        _set_defaults(args, MTDCL_CONVERTER_DEFAULTS)
+        tr, tap, tpmx, tpmn, tstp, dcpf, marg, cnvcod = args
+
         self.ib = int(ib)
         self.n = int(n)
         self.angmx = float(angmx)
@@ -2399,6 +2564,8 @@ class MultiTerminalDCLineConverter(object):
         return ', '.join([str(x) for x in data])
 
 
+
+MTDCL_BUS_DEFAULTS = [0.0, 1, 1, "            ", 0, 0.0, 1]
 class MultiTerminalDCLineDCBus(object):
     def __init__(self, idc, ib, area, zone, dcname, idc2, rgrnd, owner):
         '''This data structure contains MultiTerminal DC Line DC Bus parameters
@@ -2414,6 +2581,11 @@ class MultiTerminalDCLineDCBus(object):
             owner (int) : owner number
 
         '''
+
+        args = [ib, area, zone, dcname, idc2, rgrnd, owner]
+        _set_defaults(args, MTDCL_BUS_DEFAULTS)
+        ib, area, zone, dcname, idc2, rgrnd, owner = args
+
         self.idc = int(idc)
         self.ib = int(ib)
         self.area = int(area)
@@ -2449,6 +2621,7 @@ class MultiTerminalDCLineDCBus(object):
         return ', '.join([str(x) for x in data])
 
 
+MTDCL_LINE_DEFAULTS = [1, 1, 0.0]
 class MultiTerminalDCLineDCLink(object):
     def __init__(self, idc, jdc, dcckt, met, rdc, ldc):
         '''This data structure contains MultiTerminal DC Line DC Link parameters
@@ -2461,6 +2634,11 @@ class MultiTerminalDCLineDCLink(object):
             rdc (float) : dc link resistance
             ldc (float) : dc link inductance
         '''
+
+        args = [dcckt, met, ldc]
+        _set_defaults(args, MTDCL_LINE_DEFAULTS)
+        dcckt, met, ldc = args
+
         self.idc = int(idc)
         self.jdc = int(jdc)
         self.dcckt = unquote_string(dcckt)
