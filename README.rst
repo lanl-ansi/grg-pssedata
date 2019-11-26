@@ -41,6 +41,11 @@ Changelog
 
 **staged**
 
+- None
+
+
+**v0.1.2**
+
 - Added support for default values in data files
 - Improved error reporting when a data line does not split into an acceptable number of items
 
