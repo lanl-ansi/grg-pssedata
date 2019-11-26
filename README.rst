@@ -44,6 +44,12 @@ Changelog
 - None
 
 
+**v0.1.3**
+
+- Improved support for non-string values in class constructors
+- Fixed Bus default values
+
+
 **v0.1.2**
 
 - Added support for default values in data files
