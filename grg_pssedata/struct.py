@@ -22,7 +22,8 @@ def _guard_none(fun, val):
 def _set_defaults(args, defaults):
     assert(len(args) == len(defaults))
     for i,val in enumerate(defaults):
-        if args[i] is not None and len(args[i].strip()) == 0:
+        arg = args[i]
+        if arg is not None and isinstance(arg, str) and len(arg.strip()) == 0:
             args[i] = defaults[i]
     return args
 
@@ -346,7 +347,7 @@ class Case(object):
 
 
 
-BUS_DEFAULTS = ["            ", 0.0, 1, 1, 1, 1, 1.0, 0.0, 0.9, 1.1, 0.9, 1.1]
+BUS_DEFAULTS = ["            ", 0.0, 1, 1, 1, 1, 1.0, 0.0, 1.1, 0.9, 1.1, 0.9]
 class Bus(object):
     def __init__(self, i, name, basekv, ide, area, zone, owner, vm, va, nvhi, nvlo, evhi, evlo):
         '''This data structure contains bus parameters.
