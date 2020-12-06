@@ -349,7 +349,7 @@ class Case(object):
 
 BUS_DEFAULTS = ["            ", 0.0, 1, 1, 1, 1, 1.0, 0.0, 1.1, 0.9, 1.1, 0.9]
 class Bus(object):
-    def __init__(self, i, name, basekv, ide, area, zone, owner, vm, va, nvhi, nvlo, evhi, evlo):
+    def __init__(self, i, name, basekv, ide, area, zone, owner, vm, va, nvhi=1.1, nvlo=0.9, evhi=1.1, evlo=0.9):
         '''This data structure contains bus parameters.
 
         Args:
@@ -697,8 +697,8 @@ class SwitchedShunt(object):
 GENERATOR_DEFAULTS = [1, 0.0, 0.0, 9999.0, -9999.0, 1.0, 0, 100.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1, 100.0, 9999.0, -9999.0, 1, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 0, 1.0]
 class Generator(object):
     def __init__(self, index, i, id, pg, qg, qt, qb, vs, ireg, mbase, zr, zx,
-                    rt, xt, gtap, stat, rmpct, pt, pb, o1, f1, o2, f2, o3, f3, o4, f4,
-                    wmod, wpf):
+                    rt, xt, gtap, stat, rmpct, pt, pb, o1=1, f1=0, o2=0, f2=0, o3=1.0, f3=1.0, o4=1.0, f4=1.0,
+                    wmod=0, wpf=1.0):
         '''This data structure contains generator parameters.
 
         Args:
@@ -1043,7 +1043,7 @@ class ThreeWindingTransformer(object):
 
 TRANSFORMER_FL_DEFAULTS = [0, 1, 1, 1, 1, 0.0, 0.0, 2, "            ", 1, 1, 1.0, 0, 1.0, 0, 1.0, 0, 1.0, "            "]
 class TransformerParametersFirstLine(object):
-    def __init__(self, i, j, k, ckt, cw, cz, cm, mag1, mag2, nmetr, name, stat, o1, f1, o2, f2, o3, f3, o4, f4, vecgrp):
+    def __init__(self, i, j, k, ckt, cw, cz, cm, mag1, mag2, nmetr, name, stat, o1, f1, o2, f2, o3, f3, o4, f4, vecgrp="            "):
         '''This data structure contains transformer parameters that are common to two and three winding transformers.
 
         Args:
@@ -1259,7 +1259,7 @@ class TransformerParametersSecondLineShort(object):
 
 TRANSFORMER_WINDING_DEFAULTS = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 1.1, 0.9, 1.1, 0.9, 33, 0, 0.0, 0.0, 0.0]
 class TransformerWinding(object):
-    def __init__(self, index, windv, nomv, ang, rata, ratb, ratc, cod, cont, rma, rmi, vma, vmi, ntp, tab, cr, cx, cnxa):
+    def __init__(self, index, windv, nomv, ang, rata, ratb, ratc, cod, cont, rma, rmi, vma, vmi, ntp, tab, cr, cx, cnxa=0.0):
         '''This data structure contains transformer winding parameters.
 
         Args:
