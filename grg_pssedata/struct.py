@@ -61,15 +61,16 @@ def quote_string(s):
 
 def _psse_str(s):
     '''format numbers to PSSE style'''
-    if isinstance(s, float):
-        if abs(s) <= 1e-1:
-            return "{:.5e}".format(s)
-        elif 1e-1 < abs(s) < 1e1:
-            return "{:.5f}".format(s)
-        else:
-            return "{:.3f}".format(s)
-    else:
-        return str(s)
+    return str(s)
+    #if isinstance(s, float):
+    #    if abs(s) <= 1e-1:
+    #        return "{:.5e}".format(s)
+    #    elif 1e-1 < abs(s) < 1e1:
+    #        return "{:.5f}".format(s)
+    #    else:
+    #        return "{:.3f}".format(s)
+    #else:
+    #    return str(s)
 
 CASE_DEFAULTS = [0, 100.0, 33, 0, 0, 60]
 class Case(object):
