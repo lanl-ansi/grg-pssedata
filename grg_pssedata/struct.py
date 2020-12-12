@@ -833,7 +833,7 @@ class Generator(object):
 
 BRANCH_DEFAULTS = [1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 1, 0.0, 1, 1.0, 0, 1.0, 0, 1.0, 0, 1.0]
 class Branch(object):
-    def __init__(self, index, i, j, ckt, r, x, b, ratea, rateb, ratec, gi, bi, gj, bj, st, met, len, o1, f1, o2, f2, o3, f3, o4, f4):
+    def __init__(self, index, i, j, ckt, r, x, b, ratea, rateb, ratec, gi, bi, gj, bj, st, met, len, o1, f1, o2=0, f2=1.0, o3=0, f3=1.0, o4=0, f4=1.0):
         '''This data structure contains branch parameters.
 
         Args:

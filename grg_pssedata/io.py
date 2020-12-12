@@ -215,7 +215,7 @@ def parse_psse_case_lines(lines):
     while parse_line(lines[line_index])[0][0].strip() not in psse_terminuses:
         #line = shlex.split(lines[line_index].strip())
         #line = expand_commas(line)
-        line_parts, comment = parse_line(lines[line_index], LineRequirements(line_index, 24, 24, "branch"))
+        line_parts, comment = parse_line(lines[line_index], LineRequirements(line_index, 18, 24, "branch"))
         #print(line_parts)
         branches.append(Branch(line_index - branch_index_offset, *line_parts))
         line_index += 1
