@@ -174,7 +174,7 @@ def parse_psse_case_lines(lines):
 
     line_index = 3
     while parse_line(lines[line_index])[0][0].strip() not in psse_terminuses:
-        line_parts, comment = parse_line(lines[line_index], LineRequirements(line_index, 13, 13, "bus"))
+        line_parts, comment = parse_line(lines[line_index], LineRequirements(line_index, 9, 13, "bus"))
         buses.append(Bus(*line_parts))
         line_index += 1
     print_err('parsed {} buses'.format(len(buses)))
@@ -203,7 +203,7 @@ def parse_psse_case_lines(lines):
 
     gen_index_offset = line_index
     while parse_line(lines[line_index])[0][0].strip() not in psse_terminuses:
-        line_parts, comment = parse_line(lines[line_index], LineRequirements(line_index, 28, 28, "generator"))
+        line_parts, comment = parse_line(lines[line_index], LineRequirements(line_index, 20, 28, "generator"))
         generators.append(Generator(line_index - gen_index_offset, *line_parts))
         line_index += 1
     print_err('parsed {} generators'.format(len(generators)))
@@ -215,7 +215,7 @@ def parse_psse_case_lines(lines):
     while parse_line(lines[line_index])[0][0].strip() not in psse_terminuses:
         #line = shlex.split(lines[line_index].strip())
         #line = expand_commas(line)
-        line_parts, comment = parse_line(lines[line_index], LineRequirements(line_index, 24, 24, "branch"))
+        line_parts, comment = parse_line(lines[line_index], LineRequirements(line_index, 18, 24, "branch"))
         #print(line_parts)
         branches.append(Branch(line_index - branch_index_offset, *line_parts))
         line_index += 1
@@ -226,13 +226,13 @@ def parse_psse_case_lines(lines):
 
     transformer_index = 0
     while parse_line(lines[line_index])[0][0].strip() not in psse_terminuses:
-        line_parts_1, comment_1 = parse_line(lines[line_index], LineRequirements(line_index, 21, 21, "transformer"))
+        line_parts_1, comment_1 = parse_line(lines[line_index], LineRequirements(line_index, 20, 21, "transformer"))
         parameters_1 = TransformerParametersFirstLine(*line_parts_1)
         #print(parameters_1)
 
         if parameters_1.k == 0: # two winding case
             line_parts_2, comment_2 = parse_line(lines[line_index+1], LineRequirements(line_index+1, 3, 3, "transformer"))
-            line_parts_3, comment_3 = parse_line(lines[line_index+2], LineRequirements(line_index+1, 17, 17, "transformer"))
+            line_parts_3, comment_3 = parse_line(lines[line_index+2], LineRequirements(line_index+1, 16, 17, "transformer"))
             line_parts_4, comment_4 = parse_line(lines[line_index+3], LineRequirements(line_index+1, 2, 2, "transformer"))
 
             parameters_2 = TransformerParametersSecondLineShort(*line_parts_2)

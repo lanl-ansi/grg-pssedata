@@ -59,6 +59,18 @@ def quote_string(s):
     '''adds PSSE single quotes to a string'''
     return '\'{}\''.format(s)
 
+def _psse_str(s):
+    '''format numbers to PSSE style'''
+    return str(s)
+    #if isinstance(s, float):
+    #    if abs(s) <= 1e-1:
+    #        return "{:.5e}".format(s)
+    #    elif 1e-1 < abs(s) < 1e1:
+    #        return "{:.5f}".format(s)
+    #    else:
+    #        return "{:.3f}".format(s)
+    #else:
+    #    return str(s)
 
 CASE_DEFAULTS = [0, 100.0, 33, 0, 0, 60]
 class Case(object):
@@ -107,8 +119,8 @@ class Case(object):
         self.ic = int(ic)
         self.sbase = float(sbase)
         self.rev = int(rev)
-        self.xfrrat = float(xfrrat)
-        self.nxfrat = float(nxfrat)
+        self.xfrrat = int(xfrrat)
+        self.nxfrat = int(nxfrat)
         self.basfrq = float(basfrq)
         self.record1 = str(record1)
         self.record2 = str(record2)
@@ -343,13 +355,13 @@ class Case(object):
 
         psse_lines.append('Q')
 
-        return os.linesep.join(psse_lines)
+        return '\n'.join(psse_lines)
 
 
 
 BUS_DEFAULTS = ["            ", 0.0, 1, 1, 1, 1, 1.0, 0.0, 1.1, 0.9, 1.1, 0.9]
 class Bus(object):
-    def __init__(self, i, name, basekv, ide, area, zone, owner, vm, va, nvhi, nvlo, evhi, evlo):
+    def __init__(self, i, name, basekv, ide, area, zone, owner, vm, va, nvhi=1.1, nvlo=0.9, evhi=1.1, evlo=0.9):
         '''This data structure contains bus parameters.
 
         Args:
@@ -435,7 +447,7 @@ class Bus(object):
                 self.area, self.zone, self.owner, self.vm, self.va,
                 self.nvhi, self.nvlo, self.evhi, self.evlo]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 LOAD_DEFAULTS = [1, 1, 1, 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 1, 0]
@@ -516,7 +528,7 @@ class Load(object):
             self.zone, self.pl, self.ql, self.ip, self.iq, self.yp, self.yq,
             self.owner, self.scale, self.intrpt]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 FIXED_SHUNT_DEFAULTS = [1, 1, 0.0, 0.0]
@@ -570,7 +582,7 @@ class FixedShunt(object):
 
         data = [self.i, quote_string(self.id), self.status, self.gl, self.bl]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 SWITCHED_SHUNT_DEFAULTS = [1, 0, 1, 1.0, 1.0, 0, 100.0, "", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -691,14 +703,14 @@ class SwitchedShunt(object):
                 data.append(ni_value)
                 data.append(bi_value)
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 GENERATOR_DEFAULTS = [1, 0.0, 0.0, 9999.0, -9999.0, 1.0, 0, 100.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1, 100.0, 9999.0, -9999.0, 1, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 0, 1.0]
 class Generator(object):
     def __init__(self, index, i, id, pg, qg, qt, qb, vs, ireg, mbase, zr, zx,
-                    rt, xt, gtap, stat, rmpct, pt, pb, o1, f1, o2, f2, o3, f3, o4, f4,
-                    wmod, wpf):
+                    rt, xt, gtap, stat, rmpct, pt, pb, o1=1, f1=0, o2=0, f2=0, o3=1.0, f3=1.0, o4=1.0, f4=1.0,
+                    wmod=0, wpf=1.0):
         '''This data structure contains generator parameters.
 
         Args:
@@ -817,12 +829,12 @@ class Generator(object):
                 self.o2, self.f2, self.o3, self.f3, self.o4, self.f4, self.wmod,
                 self.wpf]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 BRANCH_DEFAULTS = [1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 1, 0.0, 1, 1.0, 0, 1.0, 0, 1.0, 0, 1.0]
 class Branch(object):
-    def __init__(self, index, i, j, ckt, r, x, b, ratea, rateb, ratec, gi, bi, gj, bj, st, met, len, o1, f1, o2, f2, o3, f3, o4, f4):
+    def __init__(self, index, i, j, ckt, r, x, b, ratea, rateb, ratec, gi, bi, gj, bj, st, met, len, o1, f1, o2=0, f2=1.0, o3=0, f3=1.0, o4=0, f4=1.0):
         '''This data structure contains branch parameters.
 
         Args:
@@ -932,7 +944,7 @@ class Branch(object):
                 self.st, self.met, self.len, self.o1, self.f1, self.o2, self.f2,
                 self.o3, self.f3, self.o4, self.f4]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 
@@ -983,7 +995,7 @@ class TwoWindingTransformer(object):
     def to_psse(self):
         '''Returns: a pss/e encoding of this data structure as a string'''
         data = [self.p1, self.p2, self.w1, self.w2]
-        return os.linesep.join([x.to_psse() for x in data])
+        return '\n'.join([x.to_psse() for x in data])
 
 
 
@@ -1037,13 +1049,13 @@ class ThreeWindingTransformer(object):
     def to_psse(self):
         '''Returns: a pss/e encoding of this data structure as a string'''
         data = [self.p1, self.p2, self.w1, self.w2, self.w3]
-        return os.linesep.join([x.to_psse() for x in data])
+        return '\n'.join([x.to_psse() for x in data])
 
 
 
 TRANSFORMER_FL_DEFAULTS = [0, 1, 1, 1, 1, 0.0, 0.0, 2, "            ", 1, 1, 1.0, 0, 1.0, 0, 1.0, 0, 1.0, "            "]
 class TransformerParametersFirstLine(object):
-    def __init__(self, i, j, k, ckt, cw, cz, cm, mag1, mag2, nmetr, name, stat, o1, f1, o2, f2, o3, f3, o4, f4, vecgrp):
+    def __init__(self, i, j, k, ckt, cw, cz, cm, mag1, mag2, nmetr, name, stat, o1, f1, o2, f2, o3, f3, o4, f4, vecgrp="            "):
         '''This data structure contains transformer parameters that are common to two and three winding transformers.
 
         Args:
@@ -1138,7 +1150,7 @@ class TransformerParametersFirstLine(object):
                 self.f1, self.o2, self.f2, self.o3, self.f3, self.o4, self.f4,
                 quote_string(self.vecgrp)]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 
@@ -1206,7 +1218,7 @@ class TransformerParametersSecondLine(object):
                 self.sbase23, self.r31, self.x31, self.sbase31, self.vmstar,
                 self.anstar]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 
@@ -1254,12 +1266,12 @@ class TransformerParametersSecondLineShort(object):
 
         data = [self.r12, self.x12, self.sbase12]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 TRANSFORMER_WINDING_DEFAULTS = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 1.1, 0.9, 1.1, 0.9, 33, 0, 0.0, 0.0, 0.0]
 class TransformerWinding(object):
-    def __init__(self, index, windv, nomv, ang, rata, ratb, ratc, cod, cont, rma, rmi, vma, vmi, ntp, tab, cr, cx, cnxa):
+    def __init__(self, index, windv, nomv, ang, rata, ratb, ratc, cod, cont, rma, rmi, vma, vmi, ntp, tab, cr, cx, cnxa=0.0):
         '''This data structure contains transformer winding parameters.
 
         Args:
@@ -1341,7 +1353,7 @@ class TransformerWinding(object):
                 self.ratc, self.cod, self.cont, self.rma, self.rmi, self.vma,
                 self.vmi, self.ntp, self.tab, self.cr, self.cx, self.cnxa]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 TRANSFORMER_WINDING_SHORT_DEFAULTS = [1.0, 0.0]
@@ -1390,7 +1402,7 @@ class TransformerWindingShort(object):
 
         data = [self.windv, self.nomv]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 
@@ -1443,7 +1455,7 @@ class Area(object):
 
         data = [self.i, self.isw, self.pdes, self.ptol, quote_string(self.arnam)]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 ZONE_DEFAULTS = ["            "]
@@ -1490,7 +1502,7 @@ class Zone(object):
 
         data = [self.i, quote_string(self.zoname)]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 OWNER_DEFAULTS = ["            "]
@@ -1535,7 +1547,7 @@ class Owner(object):
 
         data = [self.i, quote_string(self.owname)]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 FACTS_DEFAULTS = [0, 1, 0.0, 0.0, 1.0, 9999.0, 9999.0, 0.9, 1.1, 1.0, 0.0, 0.05, 100.0, 1, 0.0, 0.0, 0, 0, ""]
@@ -1626,7 +1638,7 @@ class FACTSDevice(object):
                 self.imx, self.linx, self.rmpct, self.owner, self.set1, self.set2,
                 self.vsref, self.remot, quote_string(self.mname)]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 class VSCDCLine(object):
@@ -1667,7 +1679,7 @@ class VSCDCLine(object):
     def to_psse(self):
         '''Returns: a pss/e encoding of this data structure as a string'''
         data = [self.params, self.c1, self.c2]
-        return os.linesep.join([x.to_psse() for x in data])
+        return '\n'.join([x.to_psse() for x in data])
 
 
 
@@ -1725,7 +1737,7 @@ class VSCDCLineParameters(object):
         '''Returns: a pss/e encoding of this data structure as a string'''
         data = [quote_string(self.name), self.mdc, self.rdc, self.o1, self.f1,
                 self.o2, self.f2, self.o3, self.f3, self.o4, self.f4]
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 
@@ -1799,7 +1811,7 @@ class VSCDCLineConverter(object):
         data = [self.ibus, self.type, self.mode, self.dcset, self.acset, self.aloss,
                 self.bloss, self.minloss, self.smax, self.imax, self.pwf, self.maxq,
                 self.minq, self.remot, self.rmpct]
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 
@@ -1841,7 +1853,7 @@ class TwoTerminalDCLine(object):
     def to_psse(self):
         '''Returns: a pss/e encoding of this data structure as a string'''
         data = [self.params, self.rectifier, self.inverter]
-        return os.linesep.join([x.to_psse() for x in data])
+        return '\n'.join([x.to_psse() for x in data])
 
 
 TTDCL_PARAMETER_DEFAULTS = [0, 0.0, 0.0, 0.0, "I", 0.0, 20, 1.0]
@@ -1910,7 +1922,7 @@ class TwoTerminalDCLineParameters(object):
                 self.vcmod, self.rcomp, self.delti, self.meter, self.dcvmin, self.cccitmx,
                 self.cccacc]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 TTDCL_RECTIFIER_DEFAULTS = [1.0, 1.0, 1.5, 0.51, 0.00625, 0, 0, 0, "1", 0.0]
@@ -1991,7 +2003,7 @@ class TwoTerminalDCLineRectifier(object):
                 self.tmnr, self.stpr, self.icr, self.ifr, self.itr,
                 quote_string(self.idr), self.xcapr]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 
@@ -2073,7 +2085,7 @@ class TwoTerminalDCLineInverter(object):
                 self.tmni, self.stpi, self.ici, self.ifi, self.iti,
                 quote_string(self.idi), self.xcapi]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 IMPEDANCE_CORRECTION_DEFAULTS = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -2148,7 +2160,7 @@ class TransformerImpedanceCorrection(object):
                 self.f7, self.t8, self.f8, self.t9, self.f9, self.t10, self.f10,
                 self.t11, self.f11]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 MULTISECTION_LINE_DEFAULTS = ["&1", 1]
@@ -2213,7 +2225,7 @@ class MultiSectionLineGrouping(object):
             else:
                 break
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 INTERAREA_TRANSFER_DEFAULTS = [1, 0.0]
@@ -2264,7 +2276,7 @@ class InterareaTransfer(object):
 
         data = [self.arfrom, self.arto, self.trid, self.ptran]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 INDUCTION_MACHINE_DEFAULTS = [1, 1, 1, 2, 1, 1, 1, 1, 1, 100.0, 0.0, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 2.5, 999.0, 999.0, 999.0, 999.0, 0.0, 1.0, 0.0, 1.2, 0.0, 0.0, 0.0, 1]
@@ -2385,7 +2397,7 @@ class InductionMachine(object):
                 self.xm, self.r1, self.x1, self.r2, self.x2, self.x3, self.e1, self.se1,
                 self.e2, self.se2, self.ia1, self.ia2, self.xamult]
 
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 class MultiTerminalDCLine(object):
@@ -2431,7 +2443,7 @@ class MultiTerminalDCLine(object):
         data.extend(self.converters)
         data.extend(self.dc_buses)
         data.extend(self.dc_links)
-        return os.linesep.join([x.to_psse() for x in data])
+        return '\n'.join([x.to_psse() for x in data])
 
 
 MTDCL_PARAMETER_DEFAULTS = [0, 0.0, 0]
@@ -2486,7 +2498,7 @@ class MultiTerminalDCLineParameters(object):
     def to_psse(self):
         '''Returns: a pss/e encoding of this data structure as a string'''
         data = [quote_string(self.name), self.nconv, self.ndcbs, self.ndcln, self.mdc, self.vconv, self.vcmod, self.vconvn]
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 
@@ -2562,7 +2574,7 @@ class MultiTerminalDCLineConverter(object):
         data = [self.ib, self.n, self.angmx, self.angmn, self.rc, self.xc,
                 self.ebas, self.tr, self.tap, self.tpmx, self.tpmn, self.tstp,
                 self.setvl, self.dcpf, self.marg, self.cnvcod]
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 
@@ -2619,7 +2631,7 @@ class MultiTerminalDCLineDCBus(object):
     def to_psse(self):
         '''Returns: a pss/e encoding of this data structure as a string'''
         data = [self.idc, self.ib, self.area, self.zone, quote_string(self.dcname), self.idc2, self.rgrnd, self.owner]
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
 
 
 MTDCL_LINE_DEFAULTS = [1, 1, 0.0]
@@ -2670,4 +2682,4 @@ class MultiTerminalDCLineDCLink(object):
     def to_psse(self):
         '''Returns: a pss/e encoding of this data structure as a string'''
         data = [self.idc, self.jdc, quote_string(self.dcckt), self.met, self.rdc, self.ldc]
-        return ', '.join([str(x) for x in data])
+        return ', '.join([_psse_str(x) for x in data])
