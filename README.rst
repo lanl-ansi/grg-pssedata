@@ -24,7 +24,7 @@ grg-pssedata
   :alt: Documentation Status
 
 
-grg-pssedata is a minimalist python package for working with Matpower data files.
+grg-pssedata is a minimalist python package for working with PSS/E data files.
 
 The package can be installed via::
 
