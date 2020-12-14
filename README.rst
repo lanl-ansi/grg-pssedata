@@ -41,7 +41,9 @@ Changelog
 
 **staged**
 
-- None
+- Improved support for component default values
+- Fixed type of xfrrat and nxfrat values (Issue #4)
+- Fixed line endings in file export
 
 
 **v0.1.3**
