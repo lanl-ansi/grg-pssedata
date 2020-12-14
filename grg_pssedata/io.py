@@ -118,7 +118,7 @@ def parse_line(line, line_reqs=None):
 
     if line_reqs is not None:
         if len(line_parts) < line_reqs.min_values:
-            raise PSSEDataWarning('on psse data line {} in the "{}" section, at least {} values were expected but only {} where found.\nparsed: {}'.format(line_reqs.line_index, line_reqs.section, line_reqs.min_values, len(line_parts), line_parts))
+            raise PSSEDataParsingError('on psse data line {} in the "{}" section, at least {} values were expected but only {} where found.\nparsed: {}'.format(line_reqs.line_index, line_reqs.section, line_reqs.min_values, len(line_parts), line_parts))
         if len(line_parts) > line_reqs.max_values:
             warnings.warn('on psse data line {} in the "{}" section, at most {} values were expected but {} where found, extra values will be ignored.\nparsed: {}'.format(line_reqs.line_index, line_reqs.section, line_reqs.max_values, len(line_parts), line_parts), PSSEDataWarning)
             line_parts = line_parts[:line_reqs.max_values]
